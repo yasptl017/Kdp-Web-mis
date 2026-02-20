@@ -1,0 +1,904 @@
+/* ===================================
+   ABOUT PAGES - ADDITIONAL STYLES
+=================================== */
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    padding: 20px 0 20px;
+    color: var(--white);
+    position: relative;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.3;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb {
+    background: transparent;
+    margin-bottom: 0;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb-item {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.breadcrumb-item a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--accent-orange);
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Content Box */
+.content-box {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.content-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-light);
+}
+
+.content-text p {
+    margin-bottom: 20px;
+}
+
+.content-text ul, .content-text ol {
+    margin: 20px 0;
+    padding-left: 30px;
+}
+
+.content-text li {
+    margin-bottom: 10px;
+}
+
+/* Responsive tables inside Summernote-generated content */
+.content-text table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content-text table th,
+.content-text table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+    min-width: 100px;
+    white-space: normal;
+}
+
+.content-text table th {
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--primary-blue);
+    white-space: nowrap;
+}
+
+.content-text table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Info Cards */
+.info-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--white) 100%);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid var(--light-gray);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.info-card:hover {
+    border-color: var(--accent-orange);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.info-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.info-icon i {
+    font-size: 2rem;
+    color: var(--white);
+}
+
+.info-card h5 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.info-card p {
+    color: var(--text-light);
+    margin: 0;
+}
+
+.info-card a {
+    color: var(--accent-orange);
+    font-weight: 600;
+}
+
+/* Vision & Mission Cards */
+.vm-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    border-left: 5px solid var(--accent-orange);
+    transition: all 0.3s ease;
+}
+
+.vm-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.vm-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.vm-icon i {
+    font-size: 2.5rem;
+    color: var(--white);
+}
+
+.vm-title {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.vm-content {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.vm-content ul {
+    padding-left: 20px;
+}
+
+.vm-content li {
+    margin-bottom: 12px;
+}
+
+/* Responsive tables inside Summernote-generated content */
+.vm-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.vm-content table th,
+.vm-content table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+    min-width: 100px;
+    white-space: normal;
+}
+
+.vm-content table th {
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--primary-blue);
+    white-space: nowrap;
+}
+
+.vm-content table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Principal Photo Card */
+.principal-photo-card {
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.principal-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 4px solid var(--accent-orange);
+}
+
+.principal-info {
+    padding: 25px;
+}
+
+.principal-info h4 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.principal-info p {
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* Message Card */
+.message-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.message-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+/* Responsive tables inside Summernote-generated content */
+.message-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.message-content table th,
+.message-content table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+    min-width: 100px;
+    white-space: normal;
+}
+
+.message-content table th {
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--primary-blue);
+    white-space: nowrap;
+}
+
+.message-content table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.signature {
+    border-top: 2px solid var(--light-gray);
+    padding-top: 20px;
+}
+
+/* Facility Items */
+.facility-item {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.facility-images {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.facility-img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.facility-title {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.facility-description {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.facility-description ul {
+    padding-left: 20px;
+}
+
+.facility-description li {
+    margin-bottom: 10px;
+}
+
+/* Responsive tables inside Summernote-generated content */
+.facility-description table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.facility-description table th,
+.facility-description table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+    min-width: 100px;
+    white-space: normal;
+}
+
+.facility-description table th {
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--primary-blue);
+    white-space: nowrap;
+}
+
+.facility-description table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Document Cards */
+.document-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent-orange);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    gap: 20px;
+}
+
+.document-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.document-card.large {
+    padding: 40px;
+}
+
+.document-icon {
+    flex-shrink: 0;
+}
+
+.document-icon i {
+    font-size: 3rem;
+    color: var(--accent-orange);
+}
+
+.document-content {
+    flex-grow: 1;
+}
+
+.document-title {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.document-card.large .document-title {
+    font-size: 1.5rem;
+}
+
+.document-remark {
+    color: var(--text-light);
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.document-date {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.document-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Committee Cards */
+.committee-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.committee-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.committee-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+    padding: 25px;
+    text-align: center;
+}
+
+.committee-header i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.committee-header h5 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.committee-body {
+    padding: 25px;
+}
+
+.committee-remark {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.committee-date {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Organization Cards */
+.org-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+.principal-card {
+    border: 3px solid var(--accent-orange);
+}
+
+.org-photo {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    background: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.org-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-photo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+}
+
+.placeholder-photo i {
+    font-size: 5rem;
+    color: var(--white);
+}
+
+.org-info {
+    padding: 30px;
+}
+
+.org-info h4 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.designation {
+    color: var(--accent-orange);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.contact-info {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+/* Department Cards */
+.dept-card {
+    background: linear-gradient(135deg, var(--white) 0%, #f8f9fa 100%);
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid var(--light-gray);
+    transition: all 0.3s ease;
+}
+
+.dept-card:hover {
+    border-color: var(--accent-orange);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dept-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+}
+
+.dept-icon i {
+    font-size: 1.8rem;
+    color: var(--white);
+}
+
+.dept-card h5 {
+    color: var(--primary-blue);
+    font-weight: 600;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Admin Cards */
+.admin-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-bottom: 4px solid var(--accent-orange);
+}
+
+.admin-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.admin-icon i {
+    font-size: 2rem;
+    color: var(--white);
+}
+
+.admin-card h5 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.admin-card p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .vm-card,
+    .content-box,
+    .message-card {
+        padding: 30px;
+    }
+
+    .facility-img {
+        height: 300px;
+    }
+
+    .org-photo {
+        height: 300px;
+    }
+}
+
+@media (max-width: 767px) {
+    .page-header {
+        padding: 40px 0 30px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .vm-card,
+    .content-box,
+    .message-card,
+    .facility-item {
+        padding: 25px;
+    }
+
+    .facility-img {
+        height: 250px;
+        margin-bottom: 20px;
+    }
+
+    .document-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .document-icon {
+        margin: 0 auto 15px;
+    }
+
+    .org-photo {
+        height: 250px;
+    }
+}
+
+    /* Facility Detail Card */
+    .facility-detail-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .facility-main-title {
+        color: #1e3a8a;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #f97316;
+    }
+    
+    .facility-main-title i {
+        color: #f97316;
+    }
+    
+    .facility-description {
+        color: #6b7280;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        font-size: 1.05rem;
+    }
+    
+    .facility-photos-section {
+        margin-top: 40px;
+    }
+    
+    .photos-title {
+        color: #1e3a8a;
+        font-weight: 600;
+        font-size: 1.3rem;
+        margin-bottom: 25px;
+    }
+    
+    .photos-title i {
+        color: #f97316;
+    }
+    
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .photo-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        aspect-ratio: 4/3;
+    }
+    
+    .photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    
+    .photo-item:hover img {
+        transform: scale(1.1);
+    }
+    
+    .photo-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(30, 58, 138, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .photo-item:hover .photo-overlay {
+        opacity: 1;
+    }
+    
+    .photo-overlay i {
+        color: white;
+        font-size: 2rem;
+    }
+    
+    /* Modal Styles */
+    .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.95);
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content-wrapper {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-image {
+        max-width: 100%;
+        max-height: 85vh;
+        display: none;
+        border-radius: 5px;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10000;
+        transition: color 0.3s;
+    }
+    
+    .modal-close:hover {
+        color: #bbb;
+    }
+    
+    .modal-prev, .modal-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 20px;
+        background: rgba(0,0,0,0.5);
+        border-radius: 5px;
+        transition: background 0.3s;
+        user-select: none;
+        z-index: 10000;
+    }
+    
+    .modal-prev {
+        left: 20px;
+    }
+    
+    .modal-next {
+        right: 20px;
+    }
+    
+    .modal-prev:hover, .modal-next:hover {
+        background: rgba(0,0,0,0.8);
+    }
+    
+    .modal-counter {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 18px;
+        background: rgba(0,0,0,0.7);
+        padding: 10px 20px;
+        border-radius: 20px;
+        z-index: 10000;
+    }
+    
+    @media (max-width: 768px) {
+        .facility-detail-card {
+            padding: 25px;
+        }
+        
+        .facility-main-title {
+            font-size: 1.5rem;
+        }
+        
+        .photo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        
+        .modal-prev, .modal-next {
+            font-size: 30px;
+            padding: 15px;
+        }
+        
+        .modal-close {
+            font-size: 30px;
+            right: 20px;
+        }
+    }

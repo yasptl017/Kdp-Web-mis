@@ -1,0 +1,1056 @@
+/* ===================================
+   DEPARTMENT PAGES STYLES
+=================================== */
+
+/* Department Navigation - Desktop */
+.dept-nav-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-bottom: 3px solid #f97316;
+}
+
+.dept-nav-wrapper {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 15px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #f97316 #e2e8f0;
+}
+
+.dept-nav-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.dept-nav-wrapper::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+.dept-nav-wrapper::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 10px;
+}
+
+.dept-nav-link {
+    position: relative;
+    padding: 14px 28px;
+    border-radius: 10px;
+    background: white;
+    color: #1e3a8a;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dept-nav-link:hover {
+    background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+    color: #1e3a8a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+}
+
+.dept-nav-link.active {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    border-color: #1e3a8a;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+}
+
+.dept-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #1e3a8a;
+}
+
+/* Mobile Department Navigation */
+@media (max-width: 991px) {
+    .dept-nav-wrapper {
+        padding: 12px 0;
+        gap: 6px;
+    }
+    
+    .dept-nav-link {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .dept-nav-section {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    
+    .dept-nav-wrapper {
+        gap: 5px;
+        padding: 10px 0;
+    }
+    
+    .dept-nav-link {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Department About Card */
+.dept-about-card {
+    background: white;
+    padding: 45px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+}
+
+.dept-main-title {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 4px solid #f97316;
+    position: relative;
+}
+
+.dept-main-title::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+    border-radius: 2px;
+}
+
+.dept-description {
+    color: #6b7280;
+    line-height: 1.9;
+    margin-bottom: 35px;
+    font-size: 1.05rem;
+}
+
+.dept-photos-section {
+    margin-top: 45px;
+}
+
+.photos-section-title {
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin-bottom: 30px;
+}
+
+.dept-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.dept-photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    aspect-ratio: 4/3;
+    transition: all 0.3s ease;
+}
+
+.dept-photo-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.dept-photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.dept-photo-item:hover img {
+    transform: scale(1.1);
+}
+
+.dept-photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 58, 138, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dept-photo-item:hover .dept-photo-overlay {
+    opacity: 1;
+}
+
+.dept-photo-overlay i {
+    color: white;
+    font-size: 2.5rem;
+}
+
+/* Faculty Cards - Improved Design */
+.faculty-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s ease;
+    height: 100%;
+    position: relative;
+}
+
+.faculty-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.faculty-card:hover::before {
+    transform: scaleX(1);
+}
+
+.faculty-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+}
+
+.faculty-photo {
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    position: relative;
+}
+
+.faculty-photo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+}
+
+.faculty-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.faculty-card:hover .faculty-photo img {
+    transform: scale(1.05);
+}
+
+.faculty-info {
+    padding: 25px;
+}
+
+.faculty-name {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.faculty-designation {
+    color: #f97316;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+
+/* Faculty Profile Page - Improved Design */
+.faculty-profile-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    padding: 50px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.faculty-profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
+.profile-photo {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    color: white;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.profile-designation {
+    color: #fbbf24;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 18px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.meta-item i {
+    color: #fbbf24;
+    font-size: 1.1rem;
+}
+
+.meta-item a {
+    color: white;
+    text-decoration: none;
+}
+
+.meta-item a:hover {
+    color: #fbbf24;
+}
+
+/* Faculty Tabs - Improved Design */
+.faculty-tabs-wrapper {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.faculty-nav-tabs {
+    background: #f8fafc;
+    border-bottom: 3px solid #e5e7eb;
+    padding: 20px 25px 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #f97316 #e5e7eb;
+}
+
+.faculty-nav-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.faculty-nav-tabs::-webkit-scrollbar-track {
+    background: #e5e7eb;
+}
+
+.faculty-nav-tabs::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 4px;
+}
+
+.faculty-nav-tabs .nav-link {
+    color: #6b7280;
+    font-weight: 600;
+    border: none;
+    padding: 14px 24px;
+    white-space: nowrap;
+    border-radius: 10px 10px 0 0;
+    transition: all 0.3s ease;
+    position: relative;
+    margin-right: 4px;
+}
+
+.faculty-nav-tabs .nav-link:hover {
+    background: white;
+    color: #1e3a8a;
+}
+
+.faculty-nav-tabs .nav-link.active {
+    background: white;
+    color: #1e3a8a;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.faculty-nav-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+}
+
+.faculty-tab-content {
+    padding: 45px;
+}
+
+.tab-content-wrapper {
+    color: #4b5563;
+    line-height: 1.9;
+}
+
+.tab-content-wrapper h3,
+.tab-content-wrapper h4,
+.tab-content-wrapper h5 {
+    color: #1e3a8a;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.tab-content-wrapper ul {
+    padding-left: 25px;
+    margin: 15px 0;
+}
+
+.tab-content-wrapper ul li {
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+.tab-content-wrapper table {
+    width: 100%;
+    margin: 25px 0;
+    border-collapse: collapse;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.tab-content-wrapper table th,
+.tab-content-wrapper table td {
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.tab-content-wrapper table th {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    font-weight: 600;
+}
+
+.tab-content-wrapper table tr:hover {
+    background: #f9fafb;
+}
+
+/* Newsletter Cards - Improved Design */
+.newsletter-card {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.newsletter-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.newsletter-card:hover::before {
+    transform: scaleX(1);
+}
+
+.newsletter-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+}
+
+.newsletter-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    box-shadow: 0 8px 25px rgba(249, 115, 22, 0.3);
+    transform: rotate(-5deg);
+    transition: all 0.3s ease;
+}
+
+.newsletter-card:hover .newsletter-icon {
+    transform: rotate(0deg) scale(1.05);
+}
+
+.newsletter-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.newsletter-title {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.newsletter-remark {
+    color: #6b7280;
+    margin-bottom: 18px;
+    line-height: 1.6;
+}
+
+.newsletter-date {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    padding: 8px 15px;
+    background: #f3f4f6;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.newsletter-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.newsletter-actions .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Syllabus Cards - Improved Design */
+.syllabus-card {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.syllabus-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.syllabus-card:hover::before {
+    transform: scaleY(1);
+}
+
+.syllabus-card:hover {
+    transform: translateX(10px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+}
+
+.syllabus-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    transform: rotate(5deg);
+    transition: all 0.3s ease;
+}
+
+.syllabus-card:hover .syllabus-icon {
+    transform: rotate(0deg);
+}
+
+.syllabus-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.syllabus-content {
+    flex: 1;
+}
+
+.syllabus-title {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+}
+
+/* Activity/Event Meta Row */
+.event-meta-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.activity-category,
+.activity-remark {
+    color: #6b7280;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: #f3f4f6;
+    padding: 6px 15px;
+    border-radius: 20px;
+}
+
+.activity-category i,
+.activity-remark i {
+    color: #f97316;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .dept-about-card {
+        padding: 35px;
+    }
+    
+    .faculty-profile-header {
+        padding: 40px 30px;
+    }
+    
+    .profile-name {
+        font-size: 1.8rem;
+    }
+    
+    .faculty-tab-content {
+        padding: 30px;
+    }
+    
+    .dept-photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .dept-about-card {
+        padding: 25px;
+    }
+    
+    .dept-main-title {
+        font-size: 1.6rem;
+    }
+    
+    .dept-photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+    
+    .faculty-photo {
+        height: 280px;
+    }
+    
+    .faculty-profile-header {
+        padding: 30px 20px;
+    }
+    
+    .profile-photo {
+        width: 160px;
+        height: 160px;
+        border-width: 4px;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .profile-designation {
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    
+    .profile-meta {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .meta-item {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .faculty-nav-tabs {
+        padding: 15px 20px 0;
+    }
+    
+    .faculty-nav-tabs .nav-link {
+        padding: 12px 18px;
+        font-size: 0.9rem;
+    }
+    
+    .faculty-tab-content {
+        padding: 25px 20px;
+    }
+    
+    .newsletter-card {
+        padding: 25px;
+    }
+    
+    .newsletter-icon {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .newsletter-icon i {
+        font-size: 2rem;
+    }
+    
+    .newsletter-actions {
+        flex-direction: column;
+    }
+    
+    .newsletter-actions .btn {
+        width: 100%;
+    }
+    
+    .syllabus-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px;
+    }
+    
+    .syllabus-icon {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .syllabus-icon i {
+        font-size: 2rem;
+    }
+    
+    .event-meta-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* ===================================
+   IMPROVED FACULTY PROFILE STYLES
+=================================== */
+
+/* Override profile photo wrapper */
+.profile-photo-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* Override profile photo with larger size and better border */
+.profile-photo {
+    width: 240px !important;
+    height: 240px !important;
+    border: 6px solid white !important;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Profile photo placeholder */
+.profile-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    font-size: 5rem;
+    font-weight: 700;
+}
+
+/* Override profile header with border */
+.faculty-profile-header {
+    border-radius: 20px !important;
+    border: 3px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 50px 40px !important;
+    margin-bottom: 35px !important;
+}
+
+/* Override profile name */
+.profile-name {
+    font-size: 2.5rem !important;
+    margin-bottom: 12px !important;
+}
+
+/* Override profile designation */
+.profile-designation {
+    font-size: 1.4rem !important;
+    margin-bottom: 30px !important;
+}
+
+/* Meta grid layout */
+.profile-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+/* Override meta items */
+.profile-meta-grid .meta-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profile-meta-grid .meta-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.profile-meta-grid .meta-item i {
+    font-size: 1.4rem;
+    margin-top: 3px;
+}
+
+.profile-meta-grid .meta-item div {
+    flex: 1;
+}
+
+.profile-meta-grid .meta-item small {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+.profile-meta-grid .meta-item a,
+.profile-meta-grid .meta-item span {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Override tabs wrapper with border */
+.faculty-tabs-wrapper {
+    border-radius: 20px !important;
+    border: 2px solid #e5e7eb !important;
+}
+
+/* Override tab navigation */
+.faculty-nav-tabs {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    padding: 25px 30px 0 !important;
+}
+
+.faculty-nav-tabs .nav-link {
+    padding: 15px 26px !important;
+    border-radius: 12px 12px 0 0 !important;
+    margin-right: 6px !important;
+}
+
+.faculty-nav-tabs .nav-link:hover {
+    transform: translateY(-2px);
+}
+
+.faculty-nav-tabs .nav-link.active::after {
+    height: 4px !important;
+}
+
+/* Override tab content */
+.faculty-tab-content {
+    padding: 50px !important;
+    min-height: 300px;
+}
+
+.tab-content-wrapper {
+    font-size: 1.05rem !important;
+}
+
+.tab-content-wrapper h3 {
+    font-size: 1.6rem !important;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #f97316;
+    margin-top: 30px !important;
+    margin-bottom: 18px !important;
+}
+
+.tab-content-wrapper h4 {
+    font-size: 1.4rem !important;
+}
+
+.tab-content-wrapper h5 {
+    font-size: 1.2rem !important;
+}
+
+.tab-content-wrapper ul li::marker {
+    color: #f97316;
+    font-weight: 700;
+}
+
+.tab-content-wrapper strong,
+.tab-content-wrapper b {
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+/* Override table styles with borders */
+.tab-content-wrapper table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    border: 2px solid #e5e7eb !important;
+    margin: 30px 0 !important;
+}
+
+.tab-content-wrapper table th,
+.tab-content-wrapper table td {
+    padding: 16px 20px !important;
+}
+
+.tab-content-wrapper table th {
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.tab-content-wrapper table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+/* Responsive overrides */
+@media (max-width: 991px) {
+    .profile-photo {
+        width: 200px !important;
+        height: 200px !important;
+    }
+    
+    .profile-photo-placeholder {
+        font-size: 4rem;
+    }
+    
+    .profile-name {
+        font-size: 2rem !important;
+    }
+    
+    .faculty-tab-content {
+        padding: 35px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .faculty-profile-header {
+        padding: 30px 20px !important;
+    }
+    
+    .profile-photo {
+        width: 180px !important;
+        height: 180px !important;
+        border-width: 4px !important;
+    }
+    
+    .profile-photo-placeholder {
+        font-size: 3.5rem;
+    }
+    
+    .profile-name {
+        font-size: 1.6rem !important;
+        text-align: center;
+    }
+    
+    .profile-designation {
+        font-size: 1.2rem !important;
+        text-align: center;
+    }
+    
+    .profile-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .faculty-nav-tabs {
+        padding: 15px 20px 0 !important;
+    }
+    
+    .faculty-nav-tabs .nav-link {
+        padding: 12px 18px !important;
+        font-size: 0.9rem;
+    }
+    
+    .faculty-tab-content {
+        padding: 25px 20px !important;
+    }
+}

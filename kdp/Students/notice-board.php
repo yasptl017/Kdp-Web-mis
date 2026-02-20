@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<?php $page_title = "Notice Board - K.D. Polytechnic"; ?>
+<?php include '../assets/preload/head.php'; ?>
+<body>
+    <?php include_once "../Admin/dbconfig.php"; ?>
+    
+    <?php include '../assets/preload/topbar.php'; ?>
+    <?php include '../assets/preload/header.php'; ?>
+    <?php include '../assets/preload/navigation.php'; ?>
+    <?php include '../assets/preload/mobilenav.php'; ?>
+
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="page-title">Notice Board</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Students</a></li>
+                            <li class="breadcrumb-item active">Notice Board</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <?php
+    $nb_query = "SELECT * FROM nb ORDER BY date DESC";
+    $nb_result = $conn->query($nb_query);
+    ?>
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);">
+                            <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i>All Notices</h5>
+                        </div>
+                        
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table id="noticeTable" class="table table-hover align-middle" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 80px;">Sr. No.</th>
+                                            <th style="width: 130px;">Date</th>
+                                            <th style="width: 150px;">Department</th>
+                                            <th>Title</th>
+                                            <th style="width: 100px;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        if ($nb_result && $nb_result->num_rows > 0):
+                                            $sr_no = 1;
+                                            while ($notice = $nb_result->fetch_assoc()): 
+                                        ?>
+                                            <tr>
+                                                <td><?php echo $sr_no++; ?></td>
+                                                <td data-order="<?php echo strtotime($notice['date']); ?>"><?php echo date("d-m-Y", strtotime($notice['date'])); ?></td>
+                                                <td><span class="badge bg-primary"><?php echo htmlspecialchars($notice['department']); ?></span></td>
+                                                <td><?php echo htmlspecialchars($notice['title']); ?></td>
+                                                <td>
+                                                    <a href="notice-details.php?id=<?php echo $notice['id']; ?>" 
+                                                       class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-eye me-1"></i>View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php 
+                                            endwhile;
+                                        endif;
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <?php include '../assets/preload/footer.php'; ?>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <style>
+    .dataTables_wrapper {
+        padding: 0 !important;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+        margin-bottom: 20px;
+    }
+
+    .dataTables_wrapper .dataTables_length label {
+        margin: 0;
+        font-weight: 500;
+        color: #6b7280;
+    }
+
+    .dataTables_wrapper .dataTables_length select {
+        padding: 6px 30px 6px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        margin: 0 8px;
+    }
+
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 20px;
+    }
+
+    .dataTables_wrapper .dataTables_filter label {
+        margin: 0;
+        font-weight: 500;
+        color: #6b7280;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        padding: 8px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        width: 250px;
+        margin-left: 8px;
+    }
+
+    #noticeTable thead th {
+        background: #f9fafb !important;
+        color: #1e3a8a !important;
+        font-weight: 600 !important;
+        border-bottom: 2px solid #e5e7eb !important;
+        padding: 12px 15px !important;
+        font-size: 14px !important;
+    }
+
+    #noticeTable tbody td {
+        padding: 12px 15px !important;
+        font-size: 14px !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+    }
+
+    #noticeTable tbody tr:hover {
+        background-color: #f9fafb !important;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        padding-top: 15px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        padding-top: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_empty {
+        text-align: center;
+        color: #9ca3af;
+        padding: 30px !important;
+        font-size: 15px;
+    }
+
+    /* Override student-pages.css pagination styles */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        color: inherit !important;
+        background: none !important;
+        transition: none !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: none !important;
+        color: inherit !important;
+        border-color: transparent !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: none !important;
+        color: inherit !important;
+        border-color: transparent !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        opacity: 1 !important;
+        cursor: default !important;
+        background: none !important;
+        color: inherit !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+        background: none !important;
+        color: inherit !important;
+    }
+
+    /* Apply proper pagination styles */
+    .dataTables_wrapper .dataTables_paginate .pagination {
+        margin: 0;
+        justify-content: flex-end;
+    }
+
+    .dataTables_wrapper .page-link {
+        padding: 8px 14px !important;
+        border: 1px solid #e5e7eb !important;
+        color: #1e3a8a !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        margin: 0 3px !important;
+        border-radius: 6px !important;
+        transition: all 0.2s !important;
+        background: #fff !important;
+    }
+
+    .dataTables_wrapper .page-link:hover {
+        background-color: #eff6ff !important;
+        border-color: #3b82f6 !important;
+        color: #1e3a8a !important;
+    }
+
+    .dataTables_wrapper .page-item.active .page-link {
+        background-color: #3b82f6 !important;
+        border-color: #3b82f6 !important;
+        color: #fff !important;
+    }
+
+    .dataTables_wrapper .page-item.disabled .page-link {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        background-color: #fff !important;
+        color: #9ca3af !important;
+        border-color: #e5e7eb !important;
+    }
+
+    .dataTables_wrapper .page-item.disabled .page-link:hover {
+        background-color: #fff !important;
+        color: #9ca3af !important;
+        border-color: #e5e7eb !important;
+    }
+
+    #noticeTable thead th.sorting,
+    #noticeTable thead th.sorting_asc,
+    #noticeTable thead th.sorting_desc {
+        cursor: pointer;
+        position: relative;
+        padding-right: 30px !important;
+    }
+
+    #noticeTable thead th.sorting:after,
+    #noticeTable thead th.sorting_asc:after,
+    #noticeTable thead th.sorting_desc:after {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 12px;
+    }
+
+    #noticeTable thead th.sorting:after {
+        content: '\f0dc';
+    }
+
+    #noticeTable thead th.sorting_asc:after {
+        content: '\f0de';
+        opacity: 1;
+        color: #3b82f6;
+    }
+
+    #noticeTable thead th.sorting_desc:after {
+        content: '\f0dd';
+        opacity: 1;
+        color: #3b82f6;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            width: 100%;
+            margin: 10px 0 0 0;
+        }
+
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            text-align: center;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .pagination {
+            justify-content: center;
+        }
+    }
+    </style>
+
+    <script>
+    $(document).ready(function() {
+        var table = $('#noticeTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "order": [[1, "desc"]],
+            "columnDefs": [
+                { 
+                    "orderable": false, 
+                    "targets": [0, 4] 
+                },
+                { 
+                    "orderDataType": "dom-data-order",
+                    "type": "num",
+                    "targets": 1 
+                }
+            ],
+            "language": {
+                "lengthMenu": "Show _MENU_ entries",
+                "search": "Search:",
+                "info": "Showing _START_ to _END_ of _TOTAL_ notices",
+                "infoEmpty": "No notices available",
+                "emptyTable": "No notices available",
+                "zeroRecords": "No matching notices found",
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                }
+            }
+        });
+
+        // Custom sorting for data-order attribute
+        $.fn.dataTable.ext.order['dom-data-order'] = function(settings, col) {
+            return this.api().column(col, {order:'index'}).nodes().map(function(td, i) {
+                return $(td).attr('data-order') * 1;
+            });
+        };
+
+        // Update serial numbers on draw
+        table.on('draw', function() {
+            var pageInfo = table.page.info();
+            table.column(0, {page: 'current'}).nodes().each(function(cell, i) {
+                cell.innerHTML = pageInfo.start + i + 1;
+            });
+        });
+    });
+    </script>
+</body>
+</html>

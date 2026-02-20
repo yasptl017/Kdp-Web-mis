@@ -1,0 +1,409 @@
+/* ===================================
+   STUDENTS PAGES - STYLES
+=================================== */
+
+/* Table Card */
+.table-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.table-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+    padding: 20px 25px;
+}
+
+.table-header h4 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.table-body {
+    padding: 25px;
+}
+
+/* DataTables Custom Styling */
+.dataTables_wrapper .dataTables_length {
+    margin-bottom: 20px;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    padding: 5px 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 20px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    padding: 8px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-left: 10px;
+    width: 300px;
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 15px;
+    color: #6c757d;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 15px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 5px 12px;
+    margin: 0 3px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    color: #1e3a8a !important;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #1e3a8a !important;
+    color: white !important;
+    border-color: #1e3a8a;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #f97316 !important;
+    color: white !important;
+    border-color: #f97316;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+    background: white !important;
+    color: #1e3a8a !important;
+}
+
+/* Table Styling */
+#noticeTable {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+}
+
+#noticeTable thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #1e3a8a;
+    font-weight: 600;
+    border-bottom: 2px solid #1e3a8a;
+    padding: 15px 10px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+#noticeTable tbody td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+#noticeTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Badge Styling */
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Notice Detail Card */
+.notice-detail-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.notice-detail-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+    padding: 40px;
+}
+
+.notice-meta {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.notice-department,
+.notice-date {
+    font-size: 0.95rem;
+    font-weight: 500;
+    opacity: 0.95;
+}
+
+.notice-detail-title {
+    color: var(--white);
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.notice-detail-description,
+.notice-detail-file {
+    padding: 35px 40px;
+}
+
+.section-subtitle {
+    color: var(--primary-blue);
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.description-content {
+    color: var(--text-light);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Responsive tables inside Summernote-generated content */
+.description-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.description-content table th,
+.description-content table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+    min-width: 100px;
+    white-space: normal;
+}
+
+.description-content table th {
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--primary-blue);
+    white-space: nowrap;
+}
+
+.description-content table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.file-preview-box {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.file-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.file-icon i {
+    font-size: 2.5rem;
+    color: var(--white);
+}
+
+.file-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.file-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-blue);
+    margin: 0 0 5px 0;
+}
+
+.file-size {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.notice-detail-footer {
+    padding: 30px 40px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Portal Card */
+.portal-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--white) 100%);
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px solid var(--light-gray);
+    transition: all 0.3s ease;
+}
+
+.portal-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    border-color: var(--accent-orange);
+}
+
+.portal-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+}
+
+.portal-icon i {
+    font-size: 3rem;
+    color: var(--white);
+}
+
+.portal-card h3 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.portal-card p {
+    color: var(--text-light);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Document Description */
+.document-desc {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .dataTables_wrapper .dataTables_filter input {
+        width: 200px;
+    }
+}
+
+@media (max-width: 767px) {
+    .table-body {
+        padding: 15px;
+    }
+    
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .dataTables_wrapper .dataTables_filter input {
+        width: 100%;
+        margin: 10px 0 0 0;
+    }
+
+    .portal-card {
+        padding: 30px 20px;
+    }
+
+    .portal-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .portal-icon i {
+        font-size: 2.5rem;
+    }
+
+    .portal-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    #noticeTable thead th,
+    #noticeTable tbody td {
+        font-size: 0.85rem;
+        padding: 10px 5px;
+    }
+    
+    /* Notice Details Responsive */
+    .notice-detail-header {
+        padding: 25px 20px;
+    }
+    
+    .notice-detail-title {
+        font-size: 1.5rem;
+    }
+    
+    .notice-meta {
+        gap: 15px;
+    }
+    
+    .notice-detail-description,
+    .notice-detail-file,
+    .notice-detail-footer {
+        padding: 25px 20px;
+    }
+    
+    .file-preview-box {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .file-icon {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .file-icon i {
+        font-size: 2rem;
+    }
+    
+    .file-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .file-actions .btn {
+        width: 100%;
+    }
+}

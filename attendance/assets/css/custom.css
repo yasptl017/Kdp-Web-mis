@@ -1,0 +1,420 @@
+/* =============================================
+   KDP-MIS Custom Styles - Responsive & Mobile
+   ============================================= */
+
+/* --- Bootstrap Icons size --- */
+.bi {
+    font-size: 1.2rem;
+}
+
+/* --- Color Variables --- */
+:root {
+    --primary: #5c6bc0;
+    --primary-dark: #3949ab;
+    --primary-light: #e8eaf6;
+    --success: #43a047;
+    --warning: #fb8c00;
+    --danger: #e53935;
+    --text-muted: #6c757d;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --border-radius: 0.5rem;
+}
+
+/* --- App Layout --- */
+.app-wrapper {
+    padding-top: 0;
+}
+
+.app-content {
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .app-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .app-content {
+        padding: 2rem;
+    }
+}
+
+/* --- Page Title --- */
+.app-page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: #333;
+}
+
+@media (min-width: 768px) {
+    .app-page-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* --- Cards --- */
+.app-card {
+    border-radius: var(--border-radius) !important;
+    border: 1px solid rgba(0,0,0,0.06) !important;
+}
+
+.app-card-body {
+    padding: 1rem !important;
+}
+
+@media (min-width: 768px) {
+    .app-card-body {
+        padding: 1.5rem !important;
+    }
+}
+
+/* --- Dashboard Stat Cards --- */
+.app-card-stat {
+    border-radius: var(--border-radius) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.06) !important;
+}
+
+.app-card-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+}
+
+.app-card-stat .app-card-body {
+    padding: 1.25rem !important;
+}
+
+.app-card-stat .stats-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.app-card-stat h4.stats-type {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #444;
+    margin-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .app-card-stat .app-card-body {
+        padding: 1.75rem !important;
+    }
+
+    .app-card-stat .stats-icon {
+        font-size: 2.5rem;
+    }
+
+    .app-card-stat h4.stats-type {
+        font-size: 1.1rem;
+    }
+}
+
+/* --- Forms --- */
+.form-label, label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.3rem;
+}
+
+.form-control, .form-select {
+    font-size: 0.9rem;
+    border-radius: 0.4rem;
+    border-color: #d0d5dd;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.15);
+}
+
+/* Bootstrap 4 form-row compatibility */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -8px;
+    margin-left: -8px;
+}
+
+.form-row > [class*="col-"] {
+    padding-right: 8px;
+    padding-left: 8px;
+}
+
+@media (max-width: 767.98px) {
+    .form-row > [class*="col-md-"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* --- Buttons --- */
+.btn {
+    border-radius: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary, .app-btn-primary {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover, .app-btn-primary:hover {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.btn-success {
+    background-color: var(--success) !important;
+    border-color: var(--success) !important;
+}
+
+.btn-sm {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+}
+
+/* Mobile: stack action buttons */
+@media (max-width: 575.98px) {
+    .btn-sm {
+        display: inline-block;
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* --- Tables --- */
+.table {
+    font-size: 0.875rem;
+}
+
+.table th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table-responsive {
+    border-radius: 0.4rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* --- Search Bar --- */
+.input-group .form-control {
+    border-radius: 0.4rem 0 0 0.4rem;
+}
+
+.input-group .btn {
+    border-radius: 0 0.4rem 0.4rem 0;
+}
+
+/* --- Pagination --- */
+.pagination {
+    flex-wrap: wrap;
+    gap: 0.2rem;
+}
+
+.page-link {
+    border-radius: 0.35rem !important;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+}
+
+/* --- Alerts --- */
+.alert {
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+}
+
+/* --- Attendance Student Cards --- */
+.student-card {
+    border-radius: 0.5rem !important;
+    border: 2px solid #dee2e6 !important;
+    padding: 0.75rem !important;
+    transition: all 0.15s ease;
+    display: block;
+    width: 100%;
+    background-color: #fff;
+}
+
+.student-card:hover {
+    border-color: var(--primary) !important;
+    background-color: var(--primary-light) !important;
+}
+
+.student-card.border-success {
+    border-color: var(--success) !important;
+}
+
+.student-card .student-info {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.student-card .student-info strong {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+/* Mobile: 2 cards per row */
+@media (max-width: 575.98px) {
+    #student-cards .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* --- Mark All / Clear All buttons row --- */
+.attendance-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* --- Sidebar nav improvements --- */
+.app-nav-main .nav-link {
+    font-size: 0.9rem;
+    border-radius: 0.4rem;
+    margin: 0.1rem 0.5rem;
+    transition: background-color 0.15s;
+}
+
+/* --- Login Page --- */
+.app-auth-body {
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .app.app-login .row.app-auth-wrapper {
+        min-height: 100vh;
+    }
+
+    .auth-main-col {
+        padding: 2rem 1.25rem !important;
+    }
+
+    .auth-background-col {
+        display: none !important;
+    }
+}
+
+/* --- Muster Form wrapper --- */
+.container.mt-4 {
+    max-width: 800px;
+}
+
+/* --- Responsive header --- */
+@media (max-width: 575.98px) {
+    .app-search-box {
+        display: none;
+    }
+
+    .app-header-inner .container-fluid {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* --- Section headings inside cards --- */
+.app-card-body h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-light);
+}
+
+/* --- Details info rows (takelecatt) --- */
+.detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+}
+
+.detail-row p {
+    margin: 0;
+    min-width: 140px;
+}
+
+/* --- Footer --- */
+.app-footer {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* --- Bulk upload --- */
+.custom-file-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* --- Status badges --- */
+.badge-active {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.25em 0.6em;
+    border-radius: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.25em 0.6em;
+    border-radius: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* --- DataTables responsive tweak --- */
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.35rem;
+    border: 1px solid #d0d5dd;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 0.35rem;
+    border: 1px solid #d0d5dd;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 575.98px) {
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_length {
+        text-align: left !important;
+        float: none !important;
+        width: 100%;
+    }
+}

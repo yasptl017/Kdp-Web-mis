@@ -1,0 +1,328 @@
+/* ===================================
+   ACADEMICS PAGES - STYLES
+=================================== */
+
+/* Academic Table */
+.academic-table {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.academic-table thead {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+}
+
+.academic-table thead th {
+    padding: 15px;
+    font-weight: 600;
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.academic-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.academic-table tbody tr:hover {
+    background: #f8f9fa;
+    transform: scale(1.01);
+}
+
+.academic-table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.academic-table .badge {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Accreditation Card */
+.accreditation-card {
+    background: var(--white);
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+    border-left: 5px solid var(--accent-orange);
+}
+
+.accreditation-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.accr-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+}
+
+.accr-icon i {
+    font-size: 2.5rem;
+    color: var(--white);
+}
+
+.accreditation-card h4 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.accr-status {
+    background: #f0fdf4;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #10b981;
+    margin: 20px 0;
+    font-weight: 600;
+    color: #059669;
+}
+
+.accr-remark {
+    color: var(--text-light);
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+
+/* Document Course Info */
+.document-course {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f3f4f6;
+    border-radius: 6px;
+}
+
+/* Admission Content */
+.admission-content {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.admission-content h1,
+.admission-content h2,
+.admission-content h3,
+.admission-content h4 {
+    color: var(--primary-blue);
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.admission-content ul,
+.admission-content ol {
+    margin: 20px 0;
+    padding-left: 30px;
+}
+
+.admission-content li {
+    margin-bottom: 10px;
+}
+
+.admission-content p {
+    margin-bottom: 15px;
+}
+
+.admission-content a {
+    color: var(--accent-orange);
+    font-weight: 600;
+}
+
+/* Responsive tables inside Summernote-generated content */
+.admission-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admission-content table th,
+.admission-content table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+    min-width: 100px;
+    white-space: normal;
+}
+
+.admission-content table th {
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--primary-blue);
+    white-space: nowrap;
+}
+
+.admission-content table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Syllabus Card */
+.syllabus-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--white) 100%);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border-left: 5px solid var(--accent-orange);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.syllabus-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.syllabus-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.syllabus-icon i {
+    font-size: 2.5rem;
+    color: var(--white);
+}
+
+.syllabus-card h4 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+}
+
+.syllabus-desc {
+    color: var(--text-light);
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* Info Box */
+.info-box {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--accent-orange);
+}
+
+.info-box h4 {
+    color: var(--primary-blue);
+    margin-bottom: 20px;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-list li {
+    padding: 12px 0;
+    padding-left: 30px;
+    position: relative;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.info-list li:before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    color: var(--accent-orange);
+}
+
+/* Document Actions */
+.document-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.document-actions .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .academic-table {
+        font-size: 0.9rem;
+    }
+
+    .academic-table thead th,
+    .academic-table tbody td {
+        padding: 10px;
+    }
+
+    .accreditation-card,
+    .syllabus-card {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 767px) {
+    .academic-table {
+        font-size: 0.85rem;
+    }
+
+    .academic-table thead {
+        display: none;
+    }
+
+    .academic-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .academic-table tbody td {
+        display: block;
+        text-align: right;
+        padding: 10px;
+        border: none;
+    }
+
+    .academic-table tbody td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 600;
+        color: var(--primary-blue);
+    }
+
+    .accreditation-card,
+    .syllabus-card,
+    .info-box {
+        padding: 20px;
+    }
+
+    .document-actions {
+        flex-direction: column;
+    }
+
+    .document-actions .btn {
+        width: 100%;
+    }
+}

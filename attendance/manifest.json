@@ -1,0 +1,23 @@
+{
+  "name": "KDP-MIS Attendance Management",
+  "short_name": "KDP-MIS",
+  "description": "Attendance management system for K.D. Polytechnic, Patan.",
+  "start_url": "./index.php",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f9fc",
+  "theme_color": "#3949ab",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "assets/images/app-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
