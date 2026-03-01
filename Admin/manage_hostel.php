@@ -419,12 +419,13 @@ const SN = {
     placeholder: "Enter hostel description...",
     toolbar: [
         ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
         ['fontname', ['fontname']],
         ['fontsize', ['fontsize']],
         ['color', ['color']],
         ['para', ['ul', 'ol', 'paragraph']],
-        ['insert', ['picture', 'link', 'table']],
+        ['height', ['height']],
+        ['insert', ['picture', 'link', 'table', 'hr']],
         ['view', ['fullscreen', 'codeview']]
     ]
 };

@@ -311,12 +311,13 @@ const SNconfig = {
     placeholder: "Enter description...",
     toolbar: [
         ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
         ['fontname', ['fontname']],
         ['fontsize', ['fontsize']],
         ['color', ['color']],
         ['para', ['ul', 'ol', 'paragraph']],
-        ['insert', ['link', 'picture', 'table']],
+        ['height', ['height']],
+        ['insert', ['link', 'picture', 'table', 'hr']],
         ['view', ['fullscreen', 'codeview']]
     ]
 };
