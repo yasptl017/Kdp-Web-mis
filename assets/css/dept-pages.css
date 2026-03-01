@@ -52,7 +52,6 @@
 }
 
 .dept-description {
-    color: var(--text-dark);
     line-height: 1.8;
     margin-bottom: 30px;
     font-size: 1.05rem;
@@ -296,7 +295,6 @@
 }
 
 .tab-content-wrapper {
-    color: var(--text-dark);
     line-height: 1.8;
 }
 

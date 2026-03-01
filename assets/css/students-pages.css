@@ -175,7 +175,6 @@
 }
 
 .description-content {
-    color: var(--text-dark);
     line-height: 1.8;
     font-size: 1.05rem;
 }
@@ -246,7 +245,7 @@
 }
 
 .file-size {
-    color: var(--text-light);
+    
     margin: 0;
     font-size: 0.9rem;
 }
@@ -304,7 +303,7 @@
 }
 
 .portal-card p {
-    color: var(--text-light);
+    
     margin-bottom: 30px;
     font-size: 1.1rem;
     line-height: 1.6;
@@ -312,7 +311,7 @@
 
 /* Document Description */
 .document-desc {
-    color: var(--text-light);
+    
     font-size: 0.9rem;
     margin-top: 10px;
     line-height: 1.5;

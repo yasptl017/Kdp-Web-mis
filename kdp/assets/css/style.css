@@ -138,7 +138,7 @@ img {
 
 .college-tagline {
     font-size: 1rem;
-    color: var(--text-light);
+    
     margin: 5px 0 0;
     font-weight: 500;
 }
@@ -152,7 +152,7 @@ img {
 
 .college-tagline-mobile {
     font-size: 0.9rem;
-    color: var(--text-light);
+    
     margin: 5px 0 0;
 }
 
@@ -386,7 +386,7 @@ img {
 .mobile-submenu li a {
     display: block;
     padding: 12px 20px 12px 40px;
-    color: var(--text-light);
+    
     font-size: 14px;
     border-bottom: 1px solid #e5e7eb;
 }
@@ -519,7 +519,7 @@ img {
 
 .section-subtitle {
     font-size: 1.1rem;
-    color: var(--text-light);
+    
     margin-bottom: 40px;
     text-align: center;
 }
@@ -759,7 +759,7 @@ img {
 
 .testimonial-text {
     font-style: italic;
-    color: var(--text-light);
+    
     margin-bottom: 20px;
     position: relative;
     z-index: 1;
@@ -777,7 +777,7 @@ img {
 }
 
 .testimonial-author p {
-    color: var(--text-light);
+    
     font-size: 14px;
     margin: 0;
 }
@@ -1173,7 +1173,7 @@ img {
 }
 
 .description-content {
-    color: var(--text-light);
+    
     line-height: 1.8;
     font-size: 1.05rem;
 }
@@ -1218,7 +1218,7 @@ img {
 }
 
 .file-size {
-    color: var(--text-light);
+    
     margin: 0;
     font-size: 0.9rem;
 }
@@ -1333,7 +1333,7 @@ img {
 }
 
 .contact-info-card p {
-    color: var(--text-light);
+    
     margin: 0;
     line-height: 1.8;
 }

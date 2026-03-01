@@ -68,7 +68,6 @@
 .content-text {
     font-size: 1.05rem;
     line-height: 1.8;
-    color: var(--text-dark);
 }
 
 .content-text p {
@@ -150,7 +149,7 @@
 }
 
 .info-card p {
-    color: var(--text-light);
+    
     margin: 0;
 }
 
@@ -199,7 +198,6 @@
 }
 
 .vm-content {
-    color: var(--text-dark);
     line-height: 1.8;
 }
 
@@ -264,7 +262,7 @@
 }
 
 .principal-info p {
-    color: var(--text-light);
+    
     margin: 0;
 }
 
@@ -279,7 +277,6 @@
 .message-content {
     font-size: 1.05rem;
     line-height: 1.8;
-    color: var(--text-dark);
     margin-bottom: 30px;
 }
 
@@ -342,7 +339,6 @@
 }
 
 .facility-description {
-    color: var(--text-dark);
     line-height: 1.8;
 }
 
@@ -427,13 +423,13 @@
 }
 
 .document-remark {
-    color: var(--text-light);
+    
     margin-bottom: 15px;
     font-size: 0.95rem;
 }
 
 .document-date {
-    color: var(--text-light);
+    
     font-size: 0.9rem;
     margin-bottom: 15px;
 }
@@ -483,13 +479,13 @@
 }
 
 .committee-remark {
-    color: var(--text-light);
+    
     margin-bottom: 20px;
     line-height: 1.6;
 }
 
 .committee-date {
-    color: var(--text-light);
+    
     font-size: 0.9rem;
     margin: 0;
 }
@@ -555,7 +551,7 @@
 }
 
 .contact-info {
-    color: var(--text-light);
+    
     line-height: 1.8;
 }
 
@@ -638,7 +634,7 @@
 }
 
 .admin-card p {
-    color: var(--text-light);
+    
     margin: 0;
     font-size: 0.95rem;
 }
@@ -721,7 +717,6 @@
     }
     
     .facility-description {
-        color: var(--text-dark);
         line-height: 1.8;
         margin-bottom: 30px;
         font-size: 1.05rem;

@@ -21,7 +21,7 @@
 }
 
 .facility-description {
-    color: var(--text-light);
+    
     line-height: 1.8;
     margin-bottom: 30px;
     font-size: 1.05rem;
@@ -203,13 +203,13 @@
 }
 
 .event-date {
-    color: var(--text-light);
+    
     font-size: 1.1rem;
     font-weight: 500;
 }
 
 .event-description {
-    color: var(--text-light);
+    
     line-height: 1.8;
     margin-bottom: 30px;
     font-size: 1.05rem;
