@@ -173,7 +173,6 @@ $facilities = $conn->query("SELECT * FROM facilities ORDER BY display_order ASC,
 ?>
 
 <!-- Page-specific CSS (Summernote + DataTables) -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 
 <style>
@@ -353,35 +352,16 @@ $facilities = $conn->query("SELECT * FROM facilities ORDER BY display_order ASC,
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts (Load AFTER footer.php which has jQuery) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 console.log('=== Facilities Management ===');
 
 // Summernote configuration
-const summernoteConfig = {
-    height: 300,
-    placeholder: 'Enter facility description here...',
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['table', ['table']],
-        ['insert', ['link', 'picture', 'hr']],
-        ['view', ['fullscreen', 'codeview']]
-    ]
-};
+// Summernote config moved to summernote-config.js
 
 // Single shown.bs.modal handler: init Summernote, then load pending content
 $('#facilityModal').on('shown.bs.modal', function () {
     if (!$('#description').next('.note-editor').length) {
-        $('#description').summernote(summernoteConfig);
+        initSummernote('#description', {height: 300, placeholder: "Enter facility description here..."});
     }
     if (window.pendingDescription !== undefined) {
         $('#description').summernote('code', window.pendingDescription);

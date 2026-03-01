@@ -122,8 +122,6 @@ $events = $conn->query("SELECT * FROM event_activities ORDER BY event_date DESC"
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css">
-
 <body>
 
 <?php include "sidebar.php"; ?>
@@ -236,11 +234,6 @@ onclick="return confirm('Delete event?')">Delete</a>
 </div>
 
 <?php include "footer.php"; ?>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(()=>{
     $('#eventTable').DataTable();
@@ -255,20 +248,7 @@ $(document).ready(()=>{
 // Initialize Summernote when modal is shown
 $('#eventModal').on('shown.bs.modal', function(){
     if(!$('#description').next('.note-editor').length){
-        $('#description').summernote({
-            height: 250,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-                ['fontname', ['fontname']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-                ['insert', ['link', 'picture', 'table', 'hr']],
-                ['view', ['fullscreen', 'codeview']]
-            ]
-        });
+        initSummernote('#description', {height: 250});
     }
     
     // Set pending description if exists

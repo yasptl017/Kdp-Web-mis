@@ -106,8 +106,6 @@ if ($_SESSION['role'] == 'Admin') {
 
 <!-- Page-specific CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet" />
-
 <style>
     .note-editor.note-frame {
         border: 1px solid #ced4da !important;
@@ -249,10 +247,6 @@ if ($_SESSION['role'] == 'Admin') {
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts (load AFTER footer.php which has jQuery) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 console.log('=== Notice Board Management ===');
 
@@ -273,21 +267,7 @@ $(document).ready(function () {
 });
 
 /* Summernote Config */
-const SNconfig = {
-    height: 250,
-    placeholder: "Enter notice description...",
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['insert', ['link', 'picture', 'table', 'hr']],
-        ['view', ['fullscreen', 'codeview']]
-    ]
-};
+// Summernote config moved to summernote-config.js
 
 // Initialize Summernote when modal opens
 $('#nbModal').on('shown.bs.modal', function () {
@@ -295,7 +275,7 @@ $('#nbModal').on('shown.bs.modal', function () {
     
     if (!$('#description').next('.note-editor').length) {
         console.log('Initializing Summernote');
-        $('#description').summernote(SNconfig);
+        initSummernote('#description', {height: 250, placeholder: "Enter notice description..."});
     }
     
     // Load pending description if editing

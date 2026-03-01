@@ -201,7 +201,6 @@ if ($_SESSION['role'] == 'Admin') {
 ?>
 
 <!-- Page-specific CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 
 <style>
@@ -521,37 +520,18 @@ if ($_SESSION['role'] == 'Admin') {
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 console.log('=== Department Facilities Management ===');
 
 // Summernote configuration
-const summernoteConfig = {
-    height: 250,
-    placeholder: 'Enter facility description here...',
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['table', ['table']],
-        ['insert', ['link', 'picture', 'hr']],
-        ['view', ['fullscreen', 'codeview']]
-    ]
-};
+// Summernote config moved to summernote-config.js
 
 // Initialize Summernote when modal is shown
 $('#facilityModal').on('shown.bs.modal', function () {
     console.log('Modal shown - initializing Summernote');
     
     if (!$('#description').next('.note-editor').length) {
-        $('#description').summernote(summernoteConfig);
+        initSummernote('#description', {height: 250, placeholder: "Enter facility description here..."});
         console.log('✓ Summernote initialized');
     }
     

@@ -376,9 +376,6 @@ $galleries = $conn->query("SELECT * FROM gallery ORDER BY display_order ASC, id 
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts -->
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 console.log('=== Gallery Management ===');
 

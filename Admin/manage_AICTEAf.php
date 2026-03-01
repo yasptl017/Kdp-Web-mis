@@ -295,9 +295,6 @@ $records = $conn->query("SELECT * FROM aicte_affiliation ORDER BY display_order 
 
 <?php include "footer.php"; ?>
 
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(() => {
     $("#aicteTable").DataTable({

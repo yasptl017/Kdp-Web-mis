@@ -109,8 +109,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!-- Page-specific CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
-
 <style>
     .form-card {
         background: #fff;
@@ -310,42 +308,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-
 <script>
 console.log('=== College Details Management ===');
 
 // Summernote configuration
-const summernoteConfig = {
-    height: 300,
-    placeholder: 'Enter content here...',
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['table', ['table']],
-        ['insert', ['link', 'picture', 'hr']],
-        ['view', ['fullscreen', 'codeview', 'help']]
-    ],
-    popover: {
-        image: [
-            ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
-            ['float', ['floatLeft', 'floatRight', 'floatNone']],
-            ['remove', ['removeMedia']]
-        ],
-        link: [
-            ['link', ['linkDialogShow', 'unlink']]
-        ],
-        table: [
-            ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
-            ['delete', ['deleteRow', 'deleteCol', 'deleteTable']]
-        ]
-    }
-};
+// Summernote config moved to summernote-config.js
 
 // Initialize all Summernote editors
 $(document).ready(function() {
@@ -358,16 +325,16 @@ $(document).ready(function() {
     }
     
     // Initialize all editors
-    $('#college_description').summernote(summernoteConfig);
+    initSummernote('#college_description', {height: 300, placeholder: "Enter content here..."});
     console.log('✓ College Description editor initialized');
     
-    $('#vision').summernote(summernoteConfig);
+    initSummernote('#vision', {height: 300, placeholder: "Enter content here..."});
     console.log('✓ Vision editor initialized');
     
-    $('#mission').summernote(summernoteConfig);
+    initSummernote('#mission', {height: 300, placeholder: "Enter content here..."});
     console.log('✓ Mission editor initialized');
     
-    $('#principal_message').summernote(summernoteConfig);
+    initSummernote('#principal_message', {height: 300, placeholder: "Enter content here..."});
     console.log('✓ Principal Message editor initialized');
     
     console.log('✓ All Summernote editors initialized successfully!');

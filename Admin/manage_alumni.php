@@ -99,9 +99,7 @@ $records = $conn->query("SELECT * FROM alumni ORDER BY display_order ASC, id DES
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 
     <!-- Summernote CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet" />
-
-    <style>
+<style>
         .form-card{background:#fff;padding:2rem;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
         .action-buttons{display:flex;gap:5px;justify-content:center}
         .note-editor.note-frame {
@@ -231,10 +229,6 @@ $records = $conn->query("SELECT * FROM alumni ORDER BY display_order ASC, id DES
 <?php include "footer.php"; ?>
 
 <!-- JS Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function () {
     $('#alumniTable').DataTable({
@@ -250,25 +244,11 @@ $(document).ready(function () {
 });
 
 /* Summernote Config */
-const SNconfig = {
-    height: 250,
-    placeholder: "Enter alumni description...",
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['insert', ['link', 'picture', 'table', 'hr']],
-        ['view', ['fullscreen', 'codeview']]
-    ]
-};
+// Summernote config moved to summernote-config.js
 
 $('#alumniModal').on('shown.bs.modal', function () {
     if (!$('#description').next('.note-editor').length) {
-        $('#description').summernote(SNconfig);
+        initSummernote('#description', {height: 250, placeholder: "Enter alumni description..."});
     }
     
     if (window.pendingDescription !== null && window.pendingDescription !== undefined) {

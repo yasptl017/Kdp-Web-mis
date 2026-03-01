@@ -422,9 +422,6 @@ if ($_SESSION['role'] == 'Admin') {
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts (load AFTER footer.php which has jQuery) -->
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 console.log('=== Department Newsletters Management ===');
 

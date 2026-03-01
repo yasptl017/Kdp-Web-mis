@@ -15,12 +15,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
     <!-- Summernote CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
-    
-    <!-- Summernote JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-    
-    <style>
+<!-- Summernote JS -->
+<style>
         body {
             background: #f5f5f5;
             padding: 20px;
@@ -162,22 +158,7 @@
 console.log('=== Summernote Faculty Form Test ===');
 
 // Summernote configuration
-const summernoteConfig = {
-    height: 250,
-    placeholder: 'Enter content here...',
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['table', ['table']],
-        ['insert', ['link', 'picture', 'hr']],
-        ['view', ['fullscreen', 'codeview', 'help']]
-    ]
-};
+// Summernote config moved to summernote-config.js
 
 // Check dependencies
 console.log('jQuery version:', $.fn.jquery);
@@ -187,13 +168,13 @@ console.log('Summernote available:', typeof $.fn.summernote !== 'undefined');
 $(document).ready(function() {
     console.log('Initializing Summernote editors...');
     
-    $('#skills').summernote(summernoteConfig);
+    initSummernote('#skills', {height: 250, placeholder: "Enter content here..."});
     console.log('✓ Skills editor initialized');
     
-    $('#course_taught').summernote(summernoteConfig);
+    initSummernote('#course_taught', {height: 250, placeholder: "Enter content here..."});
     console.log('✓ Course Taught editor initialized');
     
-    $('#research').summernote(summernoteConfig);
+    initSummernote('#research', {height: 250, placeholder: "Enter content here..."});
     console.log('✓ Research editor initialized');
     
     console.log('✓ All main editors initialized!');

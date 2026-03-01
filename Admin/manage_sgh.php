@@ -234,9 +234,6 @@ $records = $conn->query("SELECT * FROM sgh ORDER BY display_order ASC, id DESC")
 <?php include "footer.php"; ?>
 
 <!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function () {
     $('#sghTable').DataTable({

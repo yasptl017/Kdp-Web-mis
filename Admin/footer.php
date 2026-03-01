@@ -3,6 +3,10 @@
 <!-- jQuery FIRST (required for DataTables + plugins) -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<!-- Summernote JS + shared config (global – loaded once for all pages) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+<script src="summernote-config.js"></script>
+
 <!-- Bootstrap JS (single and correct include) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -185,9 +185,6 @@ $users = $conn->query("SELECT * FROM users ORDER BY id DESC");
 <?php include "footer.php"; ?>
 
 <!-- Page-specific Scripts (Load AFTER footer.php which has jQuery) -->
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 // Initialize DataTable
 $(document).ready(function(){

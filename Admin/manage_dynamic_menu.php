@@ -132,8 +132,6 @@ $menus = $conn->query("SELECT * FROM dynamic_menu ORDER BY id DESC");
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css">
-
 <style>
 .photo-selector{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px;margin-top:10px}
 .photo-item{position:relative;border:2px solid #ddd;border-radius:8px;padding:8px;background:#f8f9fa;transition:.3s}
@@ -265,30 +263,12 @@ onclick="return confirm('Delete this menu item?')">
 </div>
 
 <?php include "footer.php"; ?>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(()=>$('#menuTable').DataTable());
 
 $('#menuModal').on('shown.bs.modal',()=>{
 if(!$('#description').next('.note-editor').length){
-$('#description').summernote({
-    height:250,
-    toolbar:[
-        ['style',['style']],
-        ['font',['bold','italic','underline','strikethrough','superscript','subscript','clear']],
-        ['fontname',['fontname']],
-        ['fontsize',['fontsize']],
-        ['color',['color']],
-        ['para',['ul','ol','paragraph']],
-        ['height',['height']],
-        ['insert',['link','picture','table','hr']],
-        ['view',['fullscreen','codeview']]
-    ]
-});
+initSummernote('#description', {height: 250});
 }
 if(window.pendingDescription!==undefined){
 $('#description').summernote('code',window.pendingDescription);

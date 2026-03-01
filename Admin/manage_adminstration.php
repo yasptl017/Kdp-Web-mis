@@ -51,8 +51,6 @@ $records = $conn->query(
     "SELECT * FROM administration ORDER BY id DESC"
 );
 ?>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
 <style>
@@ -174,30 +172,12 @@ class="btn btn-danger btn-sm">
 </div>
 
 <?php include "footer.php"; ?>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
-const SNconfig = {
-    height: 350,
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['insert', ['link', 'picture', 'table', 'hr']],
-        ['view', ['fullscreen', 'codeview']]
-    ]
-};
+// Summernote config moved to summernote-config.js
 
 $('#administrationModal').on('shown.bs.modal', () => {
     if (!$('#description').next('.note-editor').length) {
-        $('#description').summernote(SNconfig);
+        initSummernote('#description', {height: 350});
     }
     if (window.pendingDescription !== undefined) {
         setTimeout(() => {

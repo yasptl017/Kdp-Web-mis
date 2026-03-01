@@ -181,9 +181,7 @@ if (isset($_POST['save_faculty'])) {
     <title><?php echo $isEdit ? 'Edit' : 'Add'; ?> Faculty</title>
 
     <!-- Summernote CSS - Must be in HEAD -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
-
-    <style>
+<style>
         .section-divider { 
             border-top: 2px solid #eee; 
             margin: 2rem 0; 
@@ -483,8 +481,6 @@ if (isset($_POST['save_faculty'])) {
 <?php include "footer.php"; ?>
 
 <!-- Summernote JS - Load AFTER jQuery from footer -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-
 <script>
 // Wait for DOM and all scripts to load
 $(document).ready(function() {
@@ -511,36 +507,7 @@ $(document).ready(function() {
     };
     
     // Summernote configuration with full features
-    const summernoteConfig = {
-        height: 250,
-        placeholder: 'Enter content here...',
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'hr']],
-            ['view', ['fullscreen', 'codeview', 'help']]
-        ],
-        popover: {
-            image: [
-                ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
-                ['float', ['floatLeft', 'floatRight', 'floatNone']],
-                ['remove', ['removeMedia']]
-            ],
-            link: [
-                ['link', ['linkDialogShow', 'unlink']]
-            ],
-            table: [
-                ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
-                ['delete', ['deleteRow', 'deleteCol', 'deleteTable']]
-            ]
-        }
-    };
+// Summernote config moved to summernote-config.js
     
     // Initialize all main Summernote editors
     console.log('Initializing main Summernote editors...');
