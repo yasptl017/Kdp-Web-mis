@@ -68,7 +68,7 @@
 .content-text {
     font-size: 1.05rem;
     line-height: 1.8;
-    color: var(--text-light);
+    color: var(--text-dark);
 }
 
 .content-text p {
@@ -199,7 +199,7 @@
 }
 
 .vm-content {
-    color: var(--text-light);
+    color: var(--text-dark);
     line-height: 1.8;
 }
 
@@ -279,7 +279,7 @@
 .message-content {
     font-size: 1.05rem;
     line-height: 1.8;
-    color: var(--text-light);
+    color: var(--text-dark);
     margin-bottom: 30px;
 }
 
@@ -342,7 +342,7 @@
 }
 
 .facility-description {
-    color: var(--text-light);
+    color: var(--text-dark);
     line-height: 1.8;
 }
 
@@ -721,7 +721,7 @@
     }
     
     .facility-description {
-        color: #6b7280;
+        color: var(--text-dark);
         line-height: 1.8;
         margin-bottom: 30px;
         font-size: 1.05rem;

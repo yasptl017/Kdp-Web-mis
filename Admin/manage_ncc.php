@@ -258,7 +258,8 @@ const SNconfig = {
     placeholder: "Enter description...",
     toolbar: [
         ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline']],
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['fontname', ['fontname']],
         ['fontsize', ['fontsize']],
         ['color', ['color']],
         ['para', ['ul', 'ol', 'paragraph']],

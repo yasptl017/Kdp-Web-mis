@@ -258,10 +258,13 @@ $('#eventModal').on('shown.bs.modal', function(){
         $('#description').summernote({
             height: 250,
             toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link']],
+                ['insert', ['link', 'picture', 'table']],
                 ['view', ['fullscreen', 'codeview']]
             ]
         });

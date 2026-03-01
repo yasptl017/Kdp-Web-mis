@@ -235,7 +235,19 @@ class="form-control" required>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
-const SNconfig={height:350};
+const SNconfig={
+    height:350,
+    toolbar:[
+        ['style',['style']],
+        ['font',['bold','italic','underline','clear']],
+        ['fontname',['fontname']],
+        ['fontsize',['fontsize']],
+        ['color',['color']],
+        ['para',['ul','ol','paragraph']],
+        ['insert',['link','picture','table']],
+        ['view',['fullscreen','codeview']]
+    ]
+};
 
 $('#admissionModal').on('shown.bs.modal',()=>{
 if(!$('#description').next('.note-editor').length){

@@ -52,7 +52,7 @@
 }
 
 .dept-description {
-    color: #6b7280;
+    color: var(--text-dark);
     line-height: 1.8;
     margin-bottom: 30px;
     font-size: 1.05rem;
@@ -296,7 +296,7 @@
 }
 
 .tab-content-wrapper {
-    color: #6b7280;
+    color: var(--text-dark);
     line-height: 1.8;
 }
 

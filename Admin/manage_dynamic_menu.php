@@ -275,7 +275,19 @@ $(document).ready(()=>$('#menuTable').DataTable());
 
 $('#menuModal').on('shown.bs.modal',()=>{
 if(!$('#description').next('.note-editor').length){
-$('#description').summernote({height:250});
+$('#description').summernote({
+    height:250,
+    toolbar:[
+        ['style',['style']],
+        ['font',['bold','italic','underline','clear']],
+        ['fontname',['fontname']],
+        ['fontsize',['fontsize']],
+        ['color',['color']],
+        ['para',['ul','ol','paragraph']],
+        ['insert',['link','picture','table']],
+        ['view',['fullscreen','codeview']]
+    ]
+});
 }
 if(window.pendingDescription!==undefined){
 $('#description').summernote('code',window.pendingDescription);

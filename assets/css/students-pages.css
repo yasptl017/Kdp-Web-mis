@@ -175,7 +175,7 @@
 }
 
 .description-content {
-    color: var(--text-light);
+    color: var(--text-dark);
     line-height: 1.8;
     font-size: 1.05rem;
 }

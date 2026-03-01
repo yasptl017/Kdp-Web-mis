@@ -21,7 +21,7 @@
 }
 
 .facility-description {
-    color: var(--text-light);
+    color: var(--text-dark);
     line-height: 1.8;
     margin-bottom: 30px;
     font-size: 1.05rem;
@@ -235,7 +235,7 @@
 }
 
 .event-description {
-    color: var(--text-light);
+    color: var(--text-dark);
     line-height: 1.8;
     margin-bottom: 30px;
     font-size: 1.05rem;
@@ -625,7 +625,7 @@
 }
 
 .program-content {
-    color: #4a5568;
+    color: var(--text-dark);
     font-size: 16px;
     line-height: 1.8;
 }
