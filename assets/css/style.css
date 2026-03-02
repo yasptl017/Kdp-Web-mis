@@ -1193,9 +1193,53 @@ img {
     font-size: inherit;
 }
 
+/* Override Word-paste inline width attributes on tables and cells.
+   !important is required because Word saves width="539" as HTML attributes
+   AND style="width:404pt" inline — CSS without !important cannot beat either. */
+.description-content table,
+.facility-description table,
+.event-description table,
+.dept-description table,
+.tab-content-wrapper table,
+.vm-content table,
+.message-content table,
+.content-text table,
+.admission-content table,
+.program-content table {
+    width: auto !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+}
+
+.description-content table th,
+.description-content table td,
+.facility-description table th,
+.facility-description table td,
+.event-description table th,
+.event-description table td,
+.dept-description table th,
+.dept-description table td,
+.tab-content-wrapper table th,
+.tab-content-wrapper table td,
+.vm-content table th,
+.vm-content table td,
+.message-content table th,
+.message-content table td,
+.content-text table th,
+.content-text table td,
+.admission-content table th,
+.admission-content table td,
+.program-content table th,
+.program-content table td {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+}
+
 /* Responsive tables inside Summernote-generated content */
 .description-content table {
-    width: 100%;
+    width: auto;
+    table-layout: auto;
     border-collapse: collapse;
 }
 

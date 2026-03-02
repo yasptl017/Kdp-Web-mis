@@ -99,7 +99,14 @@ window.initSummernote = function (selector, options) {
         fontNames: window.SN_FONTNAMES,
         fontNamesIgnoreCheck: window.SN_FONTNAMES,
         fontSizes: window.SN_FONTSIZES,
+        styleTags: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        tableClassName: 'sn-table',
         callbacks: {
+            onInit: function () {
+                // Make tables inside the editor size to content, not full width
+                var $editable = $(this).next('.note-editor').find('.note-editable');
+                $editable.find('table').css({ width: 'auto', tableLayout: 'auto' });
+            },
             onPaste: function (e) {
                 // Let browser paste first, then strip fonts from pasted nodes
                 var $editable = $(this).next('.note-editor').find('.note-editable');

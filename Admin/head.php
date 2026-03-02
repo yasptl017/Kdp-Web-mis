@@ -9,4 +9,8 @@
     <link rel="stylesheet" href="assets/css/custom.css">
     <!-- Summernote CSS (global – loaded once for all pages) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+    <style>
+        /* Tables inside Summernote editor: fit content, not full width */
+        .note-editable table { width: auto !important; table-layout: auto !important; }
+    </style>
 </head>

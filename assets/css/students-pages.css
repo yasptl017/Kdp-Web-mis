@@ -181,7 +181,8 @@
 
 /* Responsive tables inside Summernote-generated content */
 .description-content table {
-    width: 100%;
+    width: auto;
+    table-layout: auto;
     border-collapse: collapse;
 }
 
