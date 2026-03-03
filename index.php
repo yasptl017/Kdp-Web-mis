@@ -257,10 +257,11 @@
         myModal.show();
     }
 
-    // Duplicate scroll wrapper content so the loop is seamless (no blank gap).
-    // Animation goes 0% → -50%, so the clone fills the second half perfectly.
+    // Duplicate scroll wrapper content so the loop is seamless, then start animation.
+    // Animation is paused in CSS until .scroll-ready is added, preventing blank-screen flash.
     document.querySelectorAll('.notice-scroll-wrapper').forEach(function(wrapper) {
         wrapper.innerHTML += wrapper.innerHTML;
+        wrapper.classList.add('scroll-ready');
     });
     </script>
 </body>

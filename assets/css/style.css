@@ -585,11 +585,16 @@ img {
 }
 
 .notice-scroll-wrapper {
-    animation: scrollUp 20s linear infinite;
+    animation: scrollUp 35s linear infinite;
+    animation-play-state: paused; /* starts paused; JS unpauses after content is duplicated */
     padding: 20px;
 }
 
-.notice-scroll-wrapper:hover {
+.notice-scroll-wrapper.scroll-ready {
+    animation-play-state: running;
+}
+
+.notice-scroll-wrapper.scroll-ready:hover {
     animation-play-state: paused;
 }
 
