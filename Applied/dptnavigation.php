@@ -52,8 +52,24 @@ $nav_config = [
         'label' => 'Syllabus',
         'icon' => 'fa-book-open',
         'aliases' => []
-    ]
+    ],
 ];
+
+// Only show Placement tab if this department has at least one visible placement record
+$_show_placement = false;
+if (isset($conn) && isset($DEPARTMENT_NAME)) {
+    $_dept_esc = $conn->real_escape_string($DEPARTMENT_NAME);
+    $_pr = $conn->query("SELECT id FROM dept_placement WHERE department='$_dept_esc' AND display_order >= 0 LIMIT 1");
+    $_show_placement = ($_pr && $_pr->num_rows > 0);
+}
+if ($_show_placement) {
+    $nav_config[] = [
+        'file'    => 'placement.php',
+        'label'   => 'Placement',
+        'icon'    => 'fa-briefcase',
+        'aliases' => []
+    ];
+}
 
 // Function to check if a nav item is active
 function isNavActive($nav_item, $current_page) {

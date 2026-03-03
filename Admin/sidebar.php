@@ -68,6 +68,7 @@
                 <li><a href="manage_dept_facilities.php">Add Facilities</a></li>
                 <li><a href="manage_dept_newsletter.php">Add Newsletter</a></li>
                 <li><a href="manage_dept_syllabus.php">Add Syllabus</a></li>
+                <li><a href="manage_dept_placement.php">Placement</a></li>
             </ul>
         </li>
 
