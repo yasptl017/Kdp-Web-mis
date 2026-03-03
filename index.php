@@ -86,44 +86,7 @@
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <?php
-    $stats = $conn->query("SELECT * FROM stats LIMIT 1")->fetch_assoc();
-    ?>
-    <section class="stats-section">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <span class="stat-number"><?php echo $stats['students']; ?></span>
-                        <span class="stat-label">Students Enrolled</span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <span class="stat-number"><?php echo $stats['faculty']; ?></span>
-                        <span class="stat-label">Expert Faculty</span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <i class="fas fa-building"></i>
-                        <span class="stat-number"><?php echo $stats['departments']; ?></span>
-                        <span class="stat-label">Departments</span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <i class="fas fa-trophy"></i>
-                        <span class="stat-number"><?php echo $stats['placement']; ?></span>
-                        <span class="stat-label">Placement Rate</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Stats Section (hidden) -->
 
     <!-- Notice Board & Events Section -->
     <?php

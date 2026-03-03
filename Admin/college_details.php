@@ -49,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $logo_1 = $collegeData['logo_1'] ?? "";
     $logo_2 = $collegeData['logo_2'] ?? "";
     $principal_photo = $collegeData['principal_photo'] ?? "";
+    $college_photo = $collegeData['college_photo'] ?? "";
 
     $allowed = ["jpg","jpeg","png","gif","webp"];
 
@@ -69,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $logo_1 = uploadFile("logo_1", $logo_1, $uploadDir, "logo1", $allowed);
     $logo_2 = uploadFile("logo_2", $logo_2, $uploadDir, "logo2", $allowed);
     $principal_photo = uploadFile("principal_photo", $principal_photo, $uploadDir, "principal", $allowed);
+    $college_photo = uploadFile("college_photo", $college_photo, $uploadDir, "college_photo", $allowed);
 
     // Update college details
     $sql = "
@@ -81,6 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             address = '$address',
             contact_no = '$contact_no',
             college_description = '$college_description',
+            college_photo = '$college_photo',
             vision = '$vision',
             mission = '$mission',
             principal_name = '$principal_name',
@@ -196,6 +199,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h5><i class="fas fa-align-left me-2"></i>College Description</h5>
             <textarea id="college_description" name="college_description" class="summernote"><?php
                 echo htmlspecialchars($collegeData['college_description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+
+            <div class="mt-3">
+                <label class="form-label"><i class="fas fa-image me-1"></i>College Photo <small class="text-muted">(displayed on About page alongside description)</small></label>
+                <input type="file" name="college_photo" class="form-control" accept="image/*">
+                <?php if (!empty($collegeData['college_photo']) && file_exists($collegeData['college_photo'])): ?>
+                    <div class="mt-2 d-flex align-items-center gap-3">
+                        <img src="<?php echo htmlspecialchars($collegeData['college_photo']); ?>" class="img-preview" alt="College Photo" style="max-height:150px;">
+                        <small class="text-muted">Current photo — upload a new one to replace it.</small>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
 
         <!-- LOGOS -->

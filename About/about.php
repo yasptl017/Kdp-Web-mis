@@ -44,15 +44,28 @@
     ?>
     <section class="py-5 bg-white">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="content-box">
-                        <h2 class="section-title text-start">About <?php echo $college['college_name']; ?></h2>
+            <div class="content-box">
+                <h2 class="section-title text-start">About <?php echo $college['college_name']; ?></h2>
+                <?php if (!empty($college['college_photo']) && file_exists('../Admin/' . $college['college_photo'])): ?>
+                <div class="row align-items-start g-4">
+                    <div class="col-lg-5 col-md-5">
+                        <img src="../Admin/<?php echo htmlspecialchars($college['college_photo']); ?>"
+                             alt="<?php echo htmlspecialchars($college['college_name']); ?>"
+                             class="img-fluid rounded shadow-sm w-100"
+                             style="object-fit: cover; max-height: 400px; cursor: zoom-in;"
+                             onclick="openAboutPhoto(this.src, this.alt)">
+                    </div>
+                    <div class="col-lg-7 col-md-7">
                         <div class="content-text">
                             <?php echo $college['college_description']; ?>
                         </div>
                     </div>
                 </div>
+                <?php else: ?>
+                <div class="content-text">
+                    <?php echo $college['college_description']; ?>
+                </div>
+                <?php endif; ?>
             </div>
 
             <!-- College Info Cards -->
@@ -87,6 +100,30 @@
             </div>
         </div>
     </section>
+
+    <!-- College Photo Lightbox Modal -->
+    <div class="modal fade" id="aboutPhotoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0 bg-dark">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title text-white fw-semibold" id="aboutPhotoModalLabel"></h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-2">
+                    <img id="aboutPhotoModalImg" src="" alt="" class="img-fluid rounded" style="max-height: 82vh; width: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openAboutPhoto(src, alt) {
+        document.getElementById('aboutPhotoModalImg').src = src;
+        document.getElementById('aboutPhotoModalImg').alt = alt;
+        document.getElementById('aboutPhotoModalLabel').textContent = alt;
+        new bootstrap.Modal(document.getElementById('aboutPhotoModal')).show();
+    }
+    </script>
 
     <!-- Footer -->
     <?php include '../assets/preload/footer.php'; ?>
