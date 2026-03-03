@@ -293,6 +293,12 @@
         var myModal = new bootstrap.Modal(document.getElementById('galleryModal'));
         myModal.show();
     }
+
+    // Duplicate scroll wrapper content so the loop is seamless (no blank gap).
+    // Animation goes 0% → -50%, so the clone fills the second half perfectly.
+    document.querySelectorAll('.notice-scroll-wrapper').forEach(function(wrapper) {
+        wrapper.innerHTML += wrapper.innerHTML;
+    });
     </script>
 </body>
 </html>
