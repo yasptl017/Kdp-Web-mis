@@ -49,9 +49,9 @@ $page_title = $event['title'] . " - K.D. Polytechnic";
     </section>
 
     <section class="py-5 bg-light">
-        <div class="container">
+        <div class="container-fluid px-3 px-md-4 px-lg-5">
             <div class="row">
-                <div class="col-lg-8 mx-auto">
+                <div class="col-12">
                     <div class="activity-detail-card">
                         <div class="activity-detail-header">
                             <div class="header-content-wrapper">
@@ -139,6 +139,7 @@ $page_title = $event['title'] . " - K.D. Polytechnic";
         border-radius: 20px;
         padding: 40px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
     }
 
     .activity-detail-header {
@@ -223,7 +224,7 @@ $page_title = $event['title'] . " - K.D. Polytechnic";
 
     .photo-gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 20px;
     }
 

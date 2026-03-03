@@ -127,56 +127,82 @@
 /* Notice Detail Card */
 .notice-detail-card {
     background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    border: 1px solid #e4eaf2;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     overflow: hidden;
 }
 
 .notice-detail-header {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
     color: var(--white);
-    padding: 40px;
+    padding: 24px 30px;
+    text-align: left;
 }
 
 .notice-meta {
     display: flex;
-    gap: 30px;
-    margin-bottom: 20px;
+    gap: 12px 24px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .notice-department,
 .notice-date {
     font-size: 0.95rem;
-    font-weight: 500;
-    opacity: 0.95;
+    font-weight: 600;
+    opacity: 1;
+    display: inline-flex;
+    align-items: center;
 }
 
 .notice-detail-title {
     color: var(--white);
     font-weight: 700;
-    font-size: 2rem;
+    font-size: clamp(1.4rem, 2.2vw, 1.95rem);
     margin: 0;
-    line-height: 1.3;
+    line-height: 1.35;
+    text-align: left;
 }
 
 .notice-detail-description,
 .notice-detail-file {
-    padding: 35px 40px;
+    padding: 26px 30px;
 }
 
 .section-subtitle {
     color: var(--primary-blue);
-    font-weight: 600;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f0f0f0;
+    font-weight: 700;
+    font-size: 1.08rem;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e6ebf2;
+    text-align: left;
 }
 
 .description-content {
-    line-height: 1.8;
-    font-size: 1.05rem;
+    line-height: 1.75;
+    font-size: 1rem;
+    text-align: left;
+    word-break: break-word;
+}
+
+.description-content h1,
+.description-content h2,
+.description-content h3,
+.description-content h4,
+.description-content h5,
+.description-content h6 {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 14px 0 8px 0;
+    text-align: left;
+}
+
+.description-content p {
+    margin: 0 0 10px 0;
 }
 
 /* Responsive tables inside Summernote-generated content */
@@ -207,13 +233,13 @@
 }
 
 .file-preview-box {
-    background: #f8f9fa;
-    border: 2px dashed #dee2e6;
-    border-radius: 10px;
-    padding: 30px;
+    background: #f8fafc;
+    border: 1px dashed #d5deea;
+    border-radius: 12px;
+    padding: 18px 20px;
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 16px;
     flex-wrap: wrap;
 }
 
@@ -255,12 +281,14 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-left: auto;
 }
 
 .notice-detail-footer {
-    padding: 30px 40px;
-    background: #f8f9fa;
-    border-top: 1px solid #dee2e6;
+    padding: 20px 30px;
+    background: #f8fafc;
+    border-top: 1px solid #e1e8f0;
+    text-align: left;
 }
 
 /* Portal Card */
@@ -366,27 +394,29 @@
     
     /* Notice Details Responsive */
     .notice-detail-header {
-        padding: 25px 20px;
+        padding: 20px 18px;
     }
     
     .notice-detail-title {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
     
     .notice-meta {
-        gap: 15px;
+        gap: 10px 14px;
+        margin-bottom: 8px;
     }
     
     .notice-detail-description,
     .notice-detail-file,
     .notice-detail-footer {
-        padding: 25px 20px;
+        padding: 18px;
     }
     
     .file-preview-box {
-        padding: 20px;
+        padding: 14px;
         flex-direction: column;
-        text-align: center;
+        text-align: left;
+        align-items: flex-start;
     }
     
     .file-icon {
@@ -401,6 +431,7 @@
     .file-actions {
         width: 100%;
         flex-direction: column;
+        margin-left: 0;
     }
     
     .file-actions .btn {

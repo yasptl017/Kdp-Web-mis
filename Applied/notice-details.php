@@ -24,6 +24,7 @@ if (!$notice) {
 }
 
 $page_title = $notice['title'] . " - " . $DEPARTMENT_NAME;
+$notice_date_value = !empty($notice['date']) ? $notice['date'] : $notice['created_at'];
 ?>
 <?php include '../assets/preload/head.php'; ?>
 <body>
@@ -68,7 +69,7 @@ $page_title = $notice['title'] . " - " . $DEPARTMENT_NAME;
                                 </span>
                                 <span class="notice-date">
                                     <i class="far fa-calendar-alt me-2"></i>
-                                    <?php echo date("d F Y", strtotime($notice['created_at'])); ?>
+                                    <?php echo date("d F Y", strtotime($notice_date_value)); ?>
                                 </span>
                             </div>
                             <h2 class="notice-detail-title"><?php echo $notice['title']; ?></h2>
@@ -127,3 +128,4 @@ $page_title = $notice['title'] . " - " . $DEPARTMENT_NAME;
     <?php include '../assets/preload/footer.php'; ?>
 </body>
 </html>
+
