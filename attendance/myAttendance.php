@@ -40,6 +40,15 @@ $conn->query("CREATE TABLE IF NOT EXISTS `lecmapping` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+// ── Auto-create exceptions table (holiday/skip slots) ─────────────────────────
+$conn->query("CREATE TABLE IF NOT EXISTS `lecmapping_exceptions` (
+    `id`         INT  NOT NULL AUTO_INCREMENT,
+    `mapping_id` INT  NOT NULL,
+    `date`       DATE NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_mapping_date` (`mapping_id`, `date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
 $session_faculty_name = $_SESSION['Name'] ?? '';
 
 // Get logged-in faculty id
@@ -64,8 +73,24 @@ $mappings_stmt->execute();
 $mappings_rows = $mappings_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $mappings_stmt->close();
 
+// ── Load exceptions for this faculty's mappings ───────────────────────────────
+$exceptions_set = []; // "mapping_id|date" => true
+if (!empty($mappings_rows)) {
+    $mapping_ids = array_column($mappings_rows, 'id');
+    $exc_placeholders = implode(',', array_fill(0, count($mapping_ids), '?'));
+    $exc_types = str_repeat('i', count($mapping_ids));
+    $exc_stmt = $conn->prepare("SELECT mapping_id, date FROM lecmapping_exceptions WHERE mapping_id IN ($exc_placeholders)");
+    $exc_stmt->bind_param($exc_types, ...$mapping_ids);
+    $exc_stmt->execute();
+    $exc_res = $exc_stmt->get_result();
+    while ($er = $exc_res->fetch_assoc()) {
+        $exceptions_set[$er['mapping_id'] . '|' . $er['date']] = true;
+    }
+    $exc_stmt->close();
+}
+
 // ── Expand each mapping into individual date slots ───────────────────────────
-// slot_list: array of [mapping_id, date, faculty, term, sem, subject, class, slot]
+// slot_list: array of [mapping_id, date, faculty, term, sem, subject, class, slot, skipped]
 $slot_list = [];
 foreach ($mappings_rows as $m) {
     if ($filter_mapping > 0 && $m['id'] !== $filter_mapping) continue;
@@ -85,15 +110,17 @@ foreach ($mappings_rows as $m) {
     while ($cur < $end) {
         $dow = (int)$cur->format('w'); // 0=Sun … 6=Sat
         if (in_array($dow, $repeat_days, true)) {
+            $date_str = $cur->format('Y-m-d');
             $slot_list[] = [
                 'mapping_id' => $m['id'],
-                'date'       => $cur->format('Y-m-d'),
+                'date'       => $date_str,
                 'faculty'    => $m['faculty'],
                 'term'       => $m['term'],
                 'sem'        => $m['sem'],
                 'subject'    => $m['subject'],
                 'class'      => $m['class'],
                 'slot'       => $m['slot'],
+                'skipped'    => isset($exceptions_set[$m['id'] . '|' . $date_str]),
             ];
         }
         $cur->modify('+1 day');
@@ -137,7 +164,7 @@ foreach ($slot_list as &$slot) {
 }
 unset($slot);
 
-$bulk_candidates = array_values(array_filter($slot_list, fn($s) => !$s['filled']));
+$bulk_candidates = array_values(array_filter($slot_list, fn($s) => !$s['filled'] && !$s['skipped']));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['autofill_pending_max'])) {
     $redirect_params = [
@@ -339,12 +366,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['autofill_pending_max'
     exit();
 }
 
+// ── Handle skip (add exception) ──────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['skip_slot'])) {
+    $skip_mapping_id = (int)($_POST['skip_mapping_id'] ?? 0);
+    $skip_date       = trim((string)($_POST['skip_date'] ?? ''));
+    $redirect_params = ['status' => $filter_status, 'mapping' => $filter_mapping];
+
+    if ($skip_mapping_id > 0 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $skip_date)) {
+        $stmt = $conn->prepare("INSERT IGNORE INTO lecmapping_exceptions (mapping_id, date) VALUES (?, ?)");
+        $stmt->bind_param('is', $skip_mapping_id, $skip_date);
+        $stmt->execute();
+        $stmt->close();
+        $redirect_params['msg'] = "Slot on {$skip_date} removed (marked as holiday/skip).";
+    } else {
+        $redirect_params['err'] = 'Invalid skip request.';
+    }
+    header('Location: myAttendance.php?' . http_build_query($redirect_params));
+    exit();
+}
+
+// ── Handle restore (remove exception) ────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_slot'])) {
+    $restore_mapping_id = (int)($_POST['restore_mapping_id'] ?? 0);
+    $restore_date       = trim((string)($_POST['restore_date'] ?? ''));
+    $redirect_params = ['status' => $filter_status, 'mapping' => $filter_mapping];
+
+    if ($restore_mapping_id > 0 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $restore_date)) {
+        $stmt = $conn->prepare("DELETE FROM lecmapping_exceptions WHERE mapping_id = ? AND date = ?");
+        $stmt->bind_param('is', $restore_mapping_id, $restore_date);
+        $stmt->execute();
+        $stmt->close();
+        $redirect_params['msg'] = "Slot on {$restore_date} restored.";
+    } else {
+        $redirect_params['err'] = 'Invalid restore request.';
+    }
+    header('Location: myAttendance.php?' . http_build_query($redirect_params));
+    exit();
+}
+
 // ── Apply status filter ───────────────────────────────────────────────────────
+// Stats computed before filter (on all slots including skipped)
+$total_skipped = count(array_filter($slot_list, fn($s) => $s['skipped']));
+
 if ($filter_status === 'filled') {
     $slot_list = array_values(array_filter($slot_list, fn($s) => $s['filled']));
 } elseif ($filter_status === 'unfilled') {
-    $slot_list = array_values(array_filter($slot_list, fn($s) => !$s['filled']));
+    $slot_list = array_values(array_filter($slot_list, fn($s) => !$s['filled'] && !$s['skipped']));
+} elseif ($filter_status === 'skipped') {
+    $slot_list = array_values(array_filter($slot_list, fn($s) => $s['skipped']));
 }
+// 'all' shows everything including skipped
 
 // ── Faculty name lookup ───────────────────────────────────────────────────────
 $faculty_map = [];
@@ -353,10 +424,11 @@ while ($fr = $fres->fetch_assoc()) {
     $faculty_map[(string)$fr['id']] = $fr['Name'];
 }
 
-// Stats
+// Stats (computed on the full unfiltered list)
 $total    = count($slot_list);
 $filled   = count(array_filter($slot_list, fn($s) => $s['filled']));
-$unfilled = $total - $filled;
+$skipped  = count(array_filter($slot_list, fn($s) => $s['skipped']));
+$unfilled = $total - $filled - $skipped;
 
 $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 ?>
@@ -393,7 +465,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
             <!-- Stats row -->
             <div class="row g-3 mb-3">
-                <div class="col-4 col-md-2">
+                <div class="col-3 col-md-2">
                     <div class="app-card shadow-sm text-center">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold"><?= $total ?></div>
@@ -401,7 +473,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                         </div>
                     </div>
                 </div>
-                <div class="col-4 col-md-2">
+                <div class="col-3 col-md-2">
                     <div class="app-card shadow-sm text-center">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold text-success"><?= $filled ?></div>
@@ -409,11 +481,19 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                         </div>
                     </div>
                 </div>
-                <div class="col-4 col-md-2">
+                <div class="col-3 col-md-2">
                     <div class="app-card shadow-sm text-center">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold text-danger"><?= $unfilled ?></div>
                             <div class="text-muted" style="font-size:0.75rem;">Pending</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 col-md-2">
+                    <div class="app-card shadow-sm text-center">
+                        <div class="app-card-body py-2">
+                            <div class="fs-4 fw-bold text-secondary"><?= $skipped ?></div>
+                            <div class="text-muted" style="font-size:0.75rem;">Skipped</div>
                         </div>
                     </div>
                 </div>
@@ -422,6 +502,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             <!-- Filters -->
             <div class="app-card shadow-sm mb-3">
                 <div class="app-card-body py-2">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
                     <form method="GET" action="myAttendance.php" class="d-flex flex-wrap align-items-center gap-2">
                         <span class="fw-semibold me-1" style="font-size:0.85rem;">Filter:</span>
 
@@ -434,27 +515,23 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                             <a href="?status=filled&mapping=<?= $filter_mapping ?>"
                                class="btn <?= $filter_status === 'filled'   ? 'btn-success'   : 'btn-outline-success' ?>">
                                Filled</a>
+                            <a href="?status=skipped&mapping=<?= $filter_mapping ?>"
+                               class="btn <?= $filter_status === 'skipped'  ? 'btn-secondary' : 'btn-outline-secondary' ?>">
+                               Skipped</a>
                         </div>
 
-                        <select name="mapping" class="form-select form-select-sm" style="max-width:260px;" onchange="this.form.submit()">
-                            <option value="0">All Mappings</option>
-                            <?php foreach ($mappings_rows as $m): ?>
-                                <option value="<?= $m['id'] ?>" <?= ($filter_mapping === (int)$m['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($m['subject'] . ' · Class ' . $m['class'] . ' · ' . $m['slot']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <!-- mapping dropdown removed -->
                         <input type="hidden" name="status" value="<?= htmlspecialchars($filter_status) ?>">
                     </form>
 
                     <?php if (!empty($bulk_candidates)): ?>
-                        <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-flex flex-wrap align-items-center gap-2 mt-2">
-                            <button type="submit" name="autofill_pending_max" class="btn btn-warning btn-sm" onclick="return confirm('Autofill all pending slots using maximum available attendance on each day? Slots without autofill source will be skipped.');">
-                                <i class="bi bi-magic me-1"></i>Autofill All Pending (Max by Day)
+                        <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status])) ?>" class="d-flex flex-wrap align-items-center gap-2">
+                            <button type="submit" name="autofill_pending_max" class="btn btn-warning btn-sm" title="Autofill all pending slots (max by day)" onclick="return confirm('Autofill all pending slots using maximum available attendance on each day? Slots without autofill source will be skipped.');">
+                                <i class="bi bi-magic"></i>
                             </button>
-                        
                         </form>
                     <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
@@ -501,7 +578,13 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                     $edit_url = $slot['filled'] ? 'editlecatt.php?id=' . $slot['attendance_id'] : null;
                                     $summary_url = $slot['filled'] ? 'attendanceSummary.php?type=lecture&id=' . $slot['attendance_id'] : null;
                                 ?>
-                                <tr class="<?= !$slot['filled'] && $is_today ? 'table-warning' : (!$slot['filled'] ? 'table-danger-subtle' : '') ?>">
+                                <?php
+                                    $row_class = '';
+                                    if ($slot['skipped'])       $row_class = 'table-secondary skip-row';
+                                    elseif (!$slot['filled'] && $is_today) $row_class = 'table-warning';
+                                    elseif (!$slot['filled'])   $row_class = 'table-danger-subtle';
+                                ?>
+                                <tr class="<?= $row_class ?>">
                                     <td class="text-muted"><?= $i + 1 ?></td>
                                     <td>
                                         <strong><?= htmlspecialchars($slot['date']) ?></strong>
@@ -514,14 +597,25 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                     <td><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($slot['class']) ?></span></td>
                                     <td><?= htmlspecialchars($slot['slot']) ?></td>
                                     <td>
-                                        <?php if ($slot['filled']): ?>
+                                        <?php if ($slot['skipped']): ?>
+                                            <span class="badge bg-secondary"><i class="bi bi-slash-circle me-1"></i>Skipped</span>
+                                        <?php elseif ($slot['filled']): ?>
                                             <span class="badge bg-success">Filled</span>
                                         <?php else: ?>
                                             <span class="badge bg-danger">Pending</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>
-                                        <?php if ($slot['filled']): ?>
+                                    <td class="text-nowrap">
+                                        <?php if ($slot['skipped']): ?>
+                                            <!-- Restore button -->
+                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline">
+                                                <input type="hidden" name="restore_mapping_id" value="<?= (int)$slot['mapping_id'] ?>">
+                                                <input type="hidden" name="restore_date" value="<?= htmlspecialchars($slot['date']) ?>">
+                                                <button type="submit" name="restore_slot" class="btn btn-outline-secondary btn-sm" title="Restore this slot" onclick="return confirm('Restore this slot on <?= htmlspecialchars($slot['date']) ?>?')">
+                                                    <i class="bi bi-arrow-counterclockwise"></i> Restore
+                                                </button>
+                                            </form>
+                                        <?php elseif ($slot['filled']): ?>
                                             <a href="<?= htmlspecialchars($summary_url) ?>" class="btn btn-outline-success btn-sm me-1" title="View Summary">
                                                 <i class="bi bi-eye"></i>
                                             </a>
@@ -529,9 +623,17 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                         <?php else: ?>
-                                            <a href="<?= htmlspecialchars($take_url) ?>" class="btn btn-warning btn-sm">
+                                            <a href="<?= htmlspecialchars($take_url) ?>" class="btn btn-warning btn-sm me-1">
                                                 Take Attendance
                                             </a>
+                                            <!-- Skip button -->
+                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline">
+                                                <input type="hidden" name="skip_mapping_id" value="<?= (int)$slot['mapping_id'] ?>">
+                                                <input type="hidden" name="skip_date" value="<?= htmlspecialchars($slot['date']) ?>">
+                                                <button type="submit" name="skip_slot" class="btn btn-outline-secondary btn-sm" title="Skip this slot (holiday/no class)" onclick="return confirm('Skip slot on <?= htmlspecialchars($slot['date']) ?>? It will be removed from pending.')">
+                                                    <i class="bi bi-slash-circle"></i>
+                                                </button>
+                                            </form>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -551,6 +653,15 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 <style>
 .table-danger-subtle {
     background-color: rgba(220, 53, 69, 0.05);
+}
+.skip-row td {
+    opacity: 0.55;
+    text-decoration: line-through;
+    text-decoration-color: #888;
+}
+.skip-row td:last-child {
+    text-decoration: none;
+    opacity: 1;
 }
 .sticky-top {
     top: 0;

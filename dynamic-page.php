@@ -90,12 +90,15 @@ $page_title = $page ? $page['title'] . " - K.D. Polytechnic" : "Page Not Found -
                     $current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
                     $offset = ($current_page - 1) * $items_per_page;
                     
-                    // Build WHERE clause for matching categories
+                    // Build WHERE clause for matching categories (trim + case-insensitive)
                     $category_conditions = [];
                     foreach ($event_tags as $tag) {
-                        $tag_escaped = $conn->real_escape_string($tag);
-                        $category_conditions[] = "category = '$tag_escaped'";
+                        $tag_escaped = $conn->real_escape_string(trim($tag));
+                        if ($tag_escaped !== '') {
+                            $category_conditions[] = "TRIM(category) = '$tag_escaped'";
+                        }
                     }
+                    if (empty($category_conditions)) { $category_conditions[] = '1=0'; }
                     $where_clause = "(" . implode(" OR ", $category_conditions) . ")";
                     
                     // Count total matching events
@@ -256,6 +259,11 @@ $page_title = $page ? $page['title'] . " - K.D. Polytechnic" : "Page Not Found -
         font-weight: 700;
         font-size: 1.8rem;
         margin: 0;
+        text-align: left !important;
+    }
+    .section-title::after {
+        left: 0 !important;
+        transform: none !important;
     }
 
     .results-badge {

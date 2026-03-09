@@ -10,9 +10,9 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $host = 'localhost'; // Database host
-$dbname = 'u262763368_kdpat'; // Database name
-$username = 'u262763368_kdp631comp'; // Database username
-$password = 'Comp@Kdp631'; // Database password
+$dbname = 'kdpatt'; // Database name
+$username = 'root'; // Database username
+$password = ''; // Database password
 
 // Create connection
 $conn = new mysqli($host, $username, $password, $dbname);

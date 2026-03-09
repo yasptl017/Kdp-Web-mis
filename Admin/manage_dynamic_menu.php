@@ -49,10 +49,12 @@ if (isset($_POST['save_menu'])) {
         }
     }
 
-    /* Keep checked photos */
+    /* Keep checked photos — if editing, only keep explicitly checked ones */
     $keepPhotos = [];
-    if ($id > 0 && isset($_POST['keep_photos'])) {
-        foreach ($_POST['keep_photos'] as $p) {
+    if ($id > 0) {
+        // $_POST['keep_photos'] missing means all deselected → keep nothing
+        $checked = isset($_POST['keep_photos']) ? (array)$_POST['keep_photos'] : [];
+        foreach ($checked as $p) {
             if (in_array($p, $oldPhotos)) {
                 $keepPhotos[] = $p;
             }
@@ -63,7 +65,7 @@ if (isset($_POST['save_menu'])) {
             }
         }
     } else {
-        $keepPhotos = $oldPhotos;
+        $keepPhotos = $oldPhotos; // new record, nothing to keep
     }
 
     $photos = $keepPhotos;
