@@ -57,12 +57,13 @@ $page_title = "Placement - " . $DEPARTMENT_NAME . " - K.D. Polytechnic";
                     // Fetch matching events by tag (category match)
                     $matchedEvents = [];
                     if (!empty($tags)) {
-                        $tagList = implode(',', array_map(function($t) use ($conn) {
-                            return "'" . $conn->real_escape_string($t) . "'";
+                        $jsonConditions = implode(' OR ', array_map(function($t) use ($conn) {
+                            $tj = $conn->real_escape_string(json_encode(trim($t)));
+                            return "JSON_CONTAINS(category, '$tj', '$')";
                         }, $tags));
                         $evResult = $conn->query(
                             "SELECT id, title, event_date, photos FROM event_activities
-                             WHERE category IN ($tagList)
+                             WHERE $jsonConditions
                              ORDER BY event_date DESC"
                         );
                         if ($evResult) {

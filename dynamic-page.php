@@ -90,12 +90,15 @@ $page_title = $page ? $page['title'] . " - K.D. Polytechnic" : "Page Not Found -
                     $current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
                     $offset = ($current_page - 1) * $items_per_page;
                     
-                    // Build WHERE clause for matching categories (trim + case-insensitive)
+                    // category column stores a JSON array e.g. ["FacultyAchievement"]
+                    // Use LIKE to match any tag inside that array (handles both JSON arrays and single string values)
                     $category_conditions = [];
                     foreach ($event_tags as $tag) {
-                        $tag_escaped = $conn->real_escape_string(trim($tag));
-                        if ($tag_escaped !== '') {
-                            $category_conditions[] = "TRIM(category) = '$tag_escaped'";
+                        $tag = trim($tag);
+                        if ($tag !== '') {
+                            $tag_escaped = $conn->real_escape_string($tag);
+                            // Check if category exists in JSON array or equals single category
+                            $category_conditions[] = "(category LIKE '%\"$tag_escaped\"%' OR category = '$tag_escaped')";
                         }
                     }
                     if (empty($category_conditions)) { $category_conditions[] = '1=0'; }
@@ -127,11 +130,21 @@ $page_title = $page ? $page['title'] . " - K.D. Polytechnic" : "Page Not Found -
                         <div class="row g-4">
                             <?php while ($event = $events_result->fetch_assoc()): 
                                 $event_photos = json_decode($event['photos'], true);
+                                
+                                // Handle multiple categories
+                                $categories = json_decode($event['category'], true);
+                                if (!is_array($categories)) {
+                                    $categories = [$event['category']];
+                                }
                             ?>
                                 <div class="col-lg-4 col-md-6">
                                     <div class="activity-card" onclick="window.location.href='Campus/event-details.php?id=<?php echo $event['id']; ?>'" style="cursor: pointer;">
-                                        <div class="activity-category-badge">
-                                            <?php echo htmlspecialchars($event['category']); ?>
+                                        <div class="activity-category-badges">
+                                            <?php foreach ($categories as $cat): ?>
+                                                <span class="activity-category-badge">
+                                                    <?php echo htmlspecialchars($cat); ?>
+                                                </span>
+                                            <?php endforeach; ?>
                                         </div>
 
                                         <?php if (!empty($event_photos) && is_array($event_photos) && count($event_photos) > 0): ?>
@@ -300,7 +313,6 @@ $page_title = $page ? $page['title'] . " - K.D. Polytechnic" : "Page Not Found -
     }
     
     .activity-category-badge { 
-        position: absolute; 
         top: 12px; 
         right: 12px; 
         background: linear-gradient(135deg, #f97316, #ea580c); 
@@ -311,6 +323,17 @@ $page_title = $page ? $page['title'] . " - K.D. Polytechnic" : "Page Not Found -
         font-weight: 600; 
         z-index: 2; 
         box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3); 
+    }
+    
+    .activity-category-badges { 
+        position: absolute; 
+        top: 12px; 
+        right: 12px; 
+        z-index: 2; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 6px; 
+        align-items: flex-end;
     }
     
     .activity-image { 
