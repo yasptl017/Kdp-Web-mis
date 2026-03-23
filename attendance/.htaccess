@@ -1,0 +1,37 @@
+<FilesMatch "\.php$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+# Ensure DirectoryIndex prioritizes index.php over index.html
+DirectoryIndex index.php index.html
+
+# Enable mod_rewrite
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /attendance/
+    
+    # Prevent direct access to sensitive files
+    RewriteRule ^(dbconfig\.php|auth\.php|composer\.json|composer\.lock|\.env)$ - [F,L]
+    
+    # Allow direct access to existing files and directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Rewrite requests for non-existent files/directories to index.php
+    # (optional - uncomment if you need URL rewriting for cleaner URLs)
+    # RewriteRule ^(?!index\.php).*$ index.php [L,QSA]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Set proper MIME types
+AddType application/x-httpd-php .php
+AddType application/json .json
