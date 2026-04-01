@@ -674,35 +674,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && strtolower(trim((string)($_POST['re
                 }
                 unset($batchSessions);
 
+                $sessionsPerSheet = 30;
+                $maxSessionCount = 0;
+                foreach ($sessionsByBatch as $batchSessions) {
+                    $maxSessionCount = max($maxSessionCount, count($batchSessions));
+                }
+
+                $sheetCount = max(1, (int)ceil($maxSessionCount / $sessionsPerSheet));
                 $spreadsheet = new Spreadsheet();
-                $sheet = $spreadsheet->getActiveSheet();
-                $sheet->setTitle('Muster');
-                $nextRow = 1;
+                $usedTitles = [];
 
-                foreach ($studentsByBatch as $batchName => $batchStudents) {
-                    $batchSessions = $sessionsByBatch[$batchName] ?? [];
-                    $nextRow = write_muster_section(
-                        $sheet,
-                        $batchStudents,
-                        $batchSessions,
-                        $term,
-                        $sem,
-                        $batchName,
-                        $subjectDisplay,
-                        $nextRow,
-                        $faculty_name
-                    );
+                for ($sheetIndex = 0; $sheetIndex < $sheetCount; $sheetIndex++) {
+                    $sheet = ($sheetIndex === 0)
+                        ? $spreadsheet->getActiveSheet()
+                        : $spreadsheet->createSheet();
+
+                    $sheet->setTitle(safe_sheet_title('Muster-' . ($sheetIndex + 1), $usedTitles));
+                    $nextRow = 1;
+
+                    foreach ($studentsByBatch as $batchName => $batchStudents) {
+                        $batchSessions = $sessionsByBatch[$batchName] ?? [];
+                        $chunkSessions = array_slice($batchSessions, $sheetIndex * $sessionsPerSheet, $sessionsPerSheet);
+
+                        if (empty($chunkSessions) && $maxSessionCount > 0) {
+                            continue;
+                        }
+
+                        $nextRow = write_muster_section(
+                            $sheet,
+                            $batchStudents,
+                            $chunkSessions,
+                            $term,
+                            $sem,
+                            $batchName,
+                            $subjectDisplay,
+                            $nextRow,
+                            $faculty_name
+                        );
+                    }
+
+                    if ($nextRow === 1) {
+                        $sheet->setCellValue('A1', 'No attendance data found for selected filters.');
+                    }
+
+                    $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+                    $sheet->getPageSetup()->setFitToWidth(1);
+                    $sheet->getPageSetup()->setFitToHeight(0);
+                    $sheet->getPageSetup()->setHorizontalCentered(true);
+                    $sheet->getPageSetup()->setVerticalCentered(false);
                 }
 
-                if ($nextRow === 1) {
-                    $sheet->setCellValue('A1', 'No attendance data found for selected filters.');
-                }
-
-                $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
-                $sheet->getPageSetup()->setFitToWidth(1);
-                $sheet->getPageSetup()->setFitToHeight(0);
-                $sheet->getPageSetup()->setHorizontalCentered(true);
-                $sheet->getPageSetup()->setVerticalCentered(false);
                 $spreadsheet->setActiveSheetIndex(0);
 
                 $filename = 'muster_' . $attendance_type . '_' . $term . '_sem' . $sem . '.xlsx';
