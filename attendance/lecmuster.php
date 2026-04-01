@@ -152,23 +152,30 @@ function safe_sheet_title($baseTitle, array &$usedTitles) {
     return $candidate;
 }
 
-function write_muster_sheet($sheet, $students, $sessions, $term, $sem, $batch, $subjectDisplay, $partNo, $partTotal) {
+function write_muster_section($sheet, $students, $sessions, $term, $sem, $batch, $subjectDisplay, $startRow, $facultyDisplay = '') {
     $totalCols = max(2, 2 + count($sessions));
     $lastCol = Coordinate::stringFromColumnIndex($totalCols);
 
-    $sheet->mergeCells("A1:{$lastCol}1");
-    $sheet->setCellValue('A1', 'K. D. POLYTECHNIC, PATAN');
-    $sheet->mergeCells("A2:{$lastCol}2");
-    $sheet->setCellValue('A2', 'Department of Computer Engineering');
-    $sheet->mergeCells("A3:{$lastCol}3");
-    $sheet->setCellValue('A3', 'Faculty Name: __________________________    Subject Name (Subject Code): ' . $subjectDisplay);
-    $sheet->mergeCells("A4:{$lastCol}4");
-    $sheet->setCellValue('A4', 'Term: ' . $term . '    W.E.F.: ____________________');
-    $sheet->mergeCells("A5:{$lastCol}5");
-    $partText = ($partTotal > 1) ? ('    Part: ' . $partNo . '/' . $partTotal) : '';
-    $sheet->setCellValue('A5', 'Semester: ' . $sem . ' - Batch: ' . $batch . $partText);
+    $titleRow = $startRow;
+    $deptRow = $startRow + 1;
+    $metaRow1 = $startRow + 2;
+    $metaRow2 = $startRow + 3;
+    $metaRow3 = $startRow + 4;
+    $headerRow = $startRow + 5;
 
-    $headerRow = 6;
+    $facultyLabel = trim($facultyDisplay) !== '' ? $facultyDisplay : '__________________________';
+
+    $sheet->mergeCells("A{$titleRow}:{$lastCol}{$titleRow}");
+    $sheet->setCellValue("A{$titleRow}", 'K. D. POLYTECHNIC, PATAN');
+    $sheet->mergeCells("A{$deptRow}:{$lastCol}{$deptRow}");
+    $sheet->setCellValue("A{$deptRow}", 'Department of Computer Engineering');
+    $sheet->mergeCells("A{$metaRow1}:{$lastCol}{$metaRow1}");
+    $sheet->setCellValue("A{$metaRow1}", 'Faculty Name: ' . $facultyLabel . '    Subject Name (Subject Code): ' . $subjectDisplay);
+    $sheet->mergeCells("A{$metaRow2}:{$lastCol}{$metaRow2}");
+    $sheet->setCellValue("A{$metaRow2}", 'Term: ' . $term . '    W.E.F.: ____________________');
+    $sheet->mergeCells("A{$metaRow3}:{$lastCol}{$metaRow3}");
+    $sheet->setCellValue("A{$metaRow3}", 'Semester: ' . $sem . ' - Batch: ' . $batch);
+
     $sheet->setCellValue('A' . $headerRow, 'Enrollment');
     $sheet->setCellValue('B' . $headerRow, 'Name');
 
@@ -193,12 +200,12 @@ function write_muster_sheet($sheet, $students, $sessions, $term, $sem, $batch, $
 
     $lastDataRow = max($headerRow, $row - 1);
 
-    $sheet->getStyle("A1:{$lastCol}5")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    $sheet->getStyle("A1:{$lastCol}5")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-    $sheet->getStyle("A1")->getFont()->setBold(true)->setSize(14);
-    $sheet->getStyle("A2")->getFont()->setBold(true)->setSize(12);
-    $sheet->getStyle("A3:{$lastCol}5")->getFont()->setBold(true);
-    $sheet->getStyle("A1:{$lastCol}5")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+    $sheet->getStyle("A{$titleRow}:{$lastCol}{$metaRow3}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle("A{$titleRow}:{$lastCol}{$metaRow3}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+    $sheet->getStyle("A{$titleRow}")->getFont()->setBold(true)->setSize(14);
+    $sheet->getStyle("A{$deptRow}")->getFont()->setBold(true)->setSize(12);
+    $sheet->getStyle("A{$metaRow1}:{$lastCol}{$metaRow3}")->getFont()->setBold(true);
+    $sheet->getStyle("A{$titleRow}:{$lastCol}{$metaRow3}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
     $sheet->getStyle("A{$headerRow}:{$lastCol}{$headerRow}")->getFont()->setBold(true);
     $sheet->getStyle("A{$headerRow}:{$lastCol}{$headerRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('DCE6F1');
@@ -206,6 +213,7 @@ function write_muster_sheet($sheet, $students, $sessions, $term, $sem, $batch, $
     $sheet->getStyle("A{$headerRow}:{$lastCol}{$headerRow}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
     if ($totalCols >= 3) {
         $sheet->getStyle("C{$headerRow}:{$lastCol}{$headerRow}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle("C{$headerRow}:{$lastCol}{$headerRow}")->getAlignment()->setTextRotation(90);
     }
 
     $sheet->getStyle("A{$headerRow}:{$lastCol}{$lastDataRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
@@ -218,17 +226,12 @@ function write_muster_sheet($sheet, $students, $sessions, $term, $sem, $batch, $
     $sheet->getColumnDimension('A')->setWidth(16);
     $sheet->getColumnDimension('B')->setWidth(30);
     for ($colIndex = 3; $colIndex <= $totalCols; $colIndex++) {
-        $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($colIndex))->setWidth(11);
+        $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($colIndex))->setWidth(5);
     }
 
-    $sheet->getRowDimension($headerRow)->setRowHeight(32);
-    $sheet->freezePane('C7');
+    $sheet->getRowDimension($headerRow)->setRowHeight(90);
 
-    $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
-    $sheet->getPageSetup()->setFitToWidth(1);
-    $sheet->getPageSetup()->setFitToHeight(0);
-    $sheet->getPageSetup()->setHorizontalCentered(true);
-    $sheet->getPageSetup()->setVerticalCentered(false);
+    return $lastDataRow + 2;
 }
 
 function write_lab_utilization_sheet($sheet, $rows, $filters) {
@@ -672,42 +675,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && strtolower(trim((string)($_POST['re
                 unset($batchSessions);
 
                 $spreadsheet = new Spreadsheet();
-                $spreadsheet->removeSheetByIndex(0);
-                $usedTitles = [];
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle('Muster');
+                $nextRow = 1;
 
                 foreach ($studentsByBatch as $batchName => $batchStudents) {
                     $batchSessions = $sessionsByBatch[$batchName] ?? [];
-                    $chunks = array_chunk($batchSessions, 25);
-                    if (empty($chunks)) {
-                        $chunks = [[]];
-                    }
-
-                    $totalParts = count($chunks);
-                    foreach ($chunks as $partIndex => $chunkSessions) {
-                        $sheet = $spreadsheet->createSheet();
-                        $sheetTitleBase = $batchName . ($totalParts > 1 ? ('-P' . ($partIndex + 1)) : '');
-                        $sheet->setTitle(safe_sheet_title($sheetTitleBase, $usedTitles));
-
-                        write_muster_sheet(
-                            $sheet,
-                            $batchStudents,
-                            $chunkSessions,
-                            $term,
-                            $sem,
-                            $batchName,
-                            $subjectDisplay,
-                            $partIndex + 1,
-                            $totalParts
-                        );
-                    }
+                    $nextRow = write_muster_section(
+                        $sheet,
+                        $batchStudents,
+                        $batchSessions,
+                        $term,
+                        $sem,
+                        $batchName,
+                        $subjectDisplay,
+                        $nextRow,
+                        $faculty_name
+                    );
                 }
 
-                if ($spreadsheet->getSheetCount() === 0) {
-                    $sheet = $spreadsheet->createSheet();
-                    $sheet->setTitle('Muster');
+                if ($nextRow === 1) {
                     $sheet->setCellValue('A1', 'No attendance data found for selected filters.');
                 }
 
+                $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+                $sheet->getPageSetup()->setFitToWidth(1);
+                $sheet->getPageSetup()->setFitToHeight(0);
+                $sheet->getPageSetup()->setHorizontalCentered(true);
+                $sheet->getPageSetup()->setVerticalCentered(false);
                 $spreadsheet->setActiveSheetIndex(0);
 
                 $filename = 'muster_' . $attendance_type . '_' . $term . '_sem' . $sem . '.xlsx';
