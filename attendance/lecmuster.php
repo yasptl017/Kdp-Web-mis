@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 function csv_tokens($value) {
@@ -187,7 +188,7 @@ function write_muster_section($sheet, $students, $sessions, $term, $sem, $batch,
     $row = $headerRow + 1;
     foreach ($students as $student) {
         $enrollment = $student['enrollmentNo'];
-        $sheet->setCellValue("A{$row}", $enrollment);
+        $sheet->setCellValueExplicit("A{$row}", (string)$enrollment, DataType::TYPE_STRING);
         $sheet->setCellValue("B{$row}", $student['name']);
 
         foreach ($sessions as $index => $session) {
@@ -225,6 +226,7 @@ function write_muster_section($sheet, $students, $sessions, $term, $sem, $batch,
 
     $sheet->getColumnDimension('A')->setWidth(16);
     $sheet->getColumnDimension('B')->setWidth(30);
+    $sheet->getStyle("A{$headerRow}:A{$lastDataRow}")->getNumberFormat()->setFormatCode('@');
     for ($colIndex = 3; $colIndex <= $totalCols; $colIndex++) {
         $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($colIndex))->setWidth(5);
     }

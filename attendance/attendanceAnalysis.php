@@ -1,5 +1,13 @@
 <?php
 include('dbconfig.php');
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 function csv_tokens($value) {
     $items = array_map('trim', explode(',', (string)$value));
@@ -72,10 +80,78 @@ function present_enrollment_set($presentNo, $idToEnrollment) {
     return $set;
 }
 
+function download_attendance_analysis_excel($rows, $filters, $students_count) {
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Attendance Analysis');
+
+    $sheet->mergeCells('A1:G1');
+    $sheet->setCellValue('A1', 'Attendance Analysis Report');
+    $sheet->mergeCells('A2:G2');
+    $sheet->setCellValue('A2', 'Semester: ' . $filters['sem'] . '    Class: ' . $filters['class']);
+    $sheet->mergeCells('A3:G3');
+    $sheet->setCellValue('A3', 'Date Range: ' . $filters['start_date'] . ' to ' . $filters['end_date'] . '    Students: ' . $students_count);
+
+    $headerRow = 5;
+    $sheet->setCellValue("A{$headerRow}", 'Enrollment');
+    $sheet->setCellValue("B{$headerRow}", 'Name');
+    $sheet->setCellValue("C{$headerRow}", 'Class');
+    $sheet->setCellValue("D{$headerRow}", 'Lab Attendance %');
+    $sheet->setCellValue("E{$headerRow}", 'Lecture Attendance %');
+    $sheet->setCellValue("F{$headerRow}", 'Tutorial Attendance %');
+    $sheet->setCellValue("G{$headerRow}", 'Total Attendance %');
+
+    $rowNum = $headerRow + 1;
+    foreach ($rows as $row) {
+        $sheet->setCellValueExplicit("A{$rowNum}", (string)$row['enrollment'], DataType::TYPE_STRING);
+        $sheet->setCellValue("B{$rowNum}", $row['name']);
+        $sheet->setCellValue("C{$rowNum}", $row['class']);
+        $sheet->setCellValue("D{$rowNum}", percent_display($row['lab_pct']));
+        $sheet->setCellValue("E{$rowNum}", percent_display($row['lec_pct']));
+        $sheet->setCellValue("F{$rowNum}", percent_display($row['tut_pct']));
+        $sheet->setCellValue("G{$rowNum}", percent_display($row['total_pct']));
+        $rowNum++;
+    }
+
+    $lastDataRow = max($headerRow, $rowNum - 1);
+
+    $sheet->getStyle('A1:A3')->getFont()->setBold(true);
+    $sheet->getStyle('A1')->getFont()->setSize(14);
+    $sheet->getStyle("A1:G3")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle("A1:G3")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+    $sheet->getStyle("A{$headerRow}:G{$headerRow}")->getFont()->setBold(true);
+    $sheet->getStyle("A{$headerRow}:G{$headerRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('DCE6F1');
+    $sheet->getStyle("A{$headerRow}:G{$lastDataRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+    $sheet->getStyle("A{$headerRow}:G{$lastDataRow}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+    $sheet->getStyle("A{$headerRow}:A{$lastDataRow}")->getNumberFormat()->setFormatCode('@');
+
+    $sheet->getColumnDimension('A')->setWidth(18);
+    $sheet->getColumnDimension('B')->setWidth(28);
+    $sheet->getColumnDimension('C')->setWidth(10);
+    $sheet->getColumnDimension('D')->setWidth(18);
+    $sheet->getColumnDimension('E')->setWidth(18);
+    $sheet->getColumnDimension('F')->setWidth(18);
+    $sheet->getColumnDimension('G')->setWidth(18);
+    $sheet->freezePane('A6');
+
+    $filename = 'attendance_analysis_sem' . $filters['sem'] . '_class' . $filters['class'] . '_' . $filters['start_date'] . '_to_' . $filters['end_date'] . '.xlsx';
+    $filename = preg_replace('/[^A-Za-z0-9_\-.]/', '_', $filename);
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
+
 $sem = trim((string)($_GET['sem'] ?? ''));
 $class = strtoupper(trim((string)($_GET['class'] ?? '')));
 $start_date = trim((string)($_GET['start_date'] ?? ''));
 $end_date = trim((string)($_GET['end_date'] ?? ''));
+$export = strtolower(trim((string)($_GET['export'] ?? '')));
 
 $msg = '';
 $rows = [];
@@ -258,6 +334,15 @@ if ($hasFilterInput) {
                         'total_pct' => $totalPct,
                     ];
                 }
+
+                if ($export === 'excel' && !empty($rows)) {
+                    download_attendance_analysis_excel($rows, [
+                        'sem' => $sem,
+                        'class' => $class,
+                        'start_date' => $start_date,
+                        'end_date' => $end_date,
+                    ], $students_count);
+                }
             }
         }
     }
@@ -328,7 +413,18 @@ if ($hasFilterInput) {
                     <div class="app-card-body">
                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
                             <h4 class="mb-0">Result</h4>
-                            <span class="text-muted" style="font-size:0.875rem;">Students: <?= (int)$students_count; ?></span>
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                <span class="text-muted" style="font-size:0.875rem;">Students: <?= (int)$students_count; ?></span>
+                                <a href="attendanceAnalysis.php?<?= htmlspecialchars(http_build_query([
+                                    'sem' => $sem,
+                                    'class' => $class,
+                                    'start_date' => $start_date,
+                                    'end_date' => $end_date,
+                                    'export' => 'excel',
+                                ])); ?>" class="btn btn-success btn-sm">
+                                    <i class="bi bi-file-earmark-excel me-1"></i>Download Excel
+                                </a>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-sm table-bordered align-middle mb-0">
