@@ -16,6 +16,12 @@ DirectoryIndex index.php index.html
     RewriteEngine On
     RewriteBase /attendance/
     
+    # Redirect old HTML-based homepage to PHP login page
+    RewriteRule ^index\.html$ index.php [R=301,L]
+
+    # If folder alone is requested, serve index.php
+    RewriteRule ^$ index.php [L]
+
     # Prevent direct access to sensitive files
     RewriteRule ^(dbconfig\.php|auth\.php|composer\.json|composer\.lock|\.env)$ - [F,L]
     
@@ -23,7 +29,7 @@ DirectoryIndex index.php index.html
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
-    
+
     # Rewrite requests for non-existent files/directories to index.php
     # (optional - uncomment if you need URL rewriting for cleaner URLs)
     # RewriteRule ^(?!index\.php).*$ index.php [L,QSA]

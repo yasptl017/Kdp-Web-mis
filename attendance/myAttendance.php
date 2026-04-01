@@ -442,9 +442,9 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     <div class="app-content pt-3 p-md-3 p-lg-4">
         <div class="container-xl">
 
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 attendance-toolbar">
                 <h1 class="app-page-title mb-0"><i class="bi bi-calendar2-check me-2"></i>My Attendance</h1>
-                <a href="addMapping.php" class="btn btn-sm mapping-cta-btn">
+                <a href="addLectureMapping.php" class="btn btn-sm mapping-cta-btn">
                     Add / Manage Mappings
                 </a>
             </div>
@@ -459,38 +459,38 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             <?php if (empty($mappings_rows)): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>No lecture mappings found for your account.
-                    <a href="addMapping.php" class="alert-link">Create a mapping</a> to get started.
+                    <a href="addLectureMapping.php" class="alert-link">Create a mapping</a> to get started.
                 </div>
             <?php else: ?>
 
             <!-- Stats row -->
-            <div class="row g-3 mb-3">
-                <div class="col-3 col-md-2">
-                    <div class="app-card shadow-sm text-center">
+            <div class="row g-3 mb-3 attendance-stats-row">
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold"><?= $total ?></div>
                             <div class="text-muted" style="font-size:0.75rem;">Total</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-3 col-md-2">
-                    <div class="app-card shadow-sm text-center">
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold text-success"><?= $filled ?></div>
                             <div class="text-muted" style="font-size:0.75rem;">Filled</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-3 col-md-2">
-                    <div class="app-card shadow-sm text-center">
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold text-danger"><?= $unfilled ?></div>
                             <div class="text-muted" style="font-size:0.75rem;">Pending</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-3 col-md-2">
-                    <div class="app-card shadow-sm text-center">
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card">
                         <div class="app-card-body py-2">
                             <div class="fs-4 fw-bold text-secondary"><?= $skipped ?></div>
                             <div class="text-muted" style="font-size:0.75rem;">Skipped</div>
@@ -501,33 +501,31 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
             <!-- Filters -->
             <div class="app-card shadow-sm mb-3">
-                <div class="app-card-body py-2">
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                    <form method="GET" action="myAttendance.php" class="d-flex flex-wrap align-items-center gap-2">
-                        <span class="fw-semibold me-1" style="font-size:0.85rem;">Filter:</span>
+                <div class="app-card-body py-3">
+                    <div class="attendance-filters">
+                    <form method="GET" action="myAttendance.php" class="attendance-filter-form">
+                        <span class="fw-semibold attendance-filter-label">Filter:</span>
 
-                        <div class="btn-group btn-group-sm" role="group">
+                        <div class="attendance-filter-pills" role="group" aria-label="Attendance filters">
                             <a href="?status=all&mapping=<?= $filter_mapping ?>"
-                               class="btn <?= $filter_status === 'all'      ? 'btn-secondary' : 'btn-outline-secondary' ?>">All</a>
+                               class="btn btn-sm <?= $filter_status === 'all'      ? 'btn-secondary' : 'btn-outline-secondary' ?>">All</a>
                             <a href="?status=unfilled&mapping=<?= $filter_mapping ?>"
-                               class="btn <?= $filter_status === 'unfilled' ? 'btn-danger'    : 'btn-outline-danger' ?>">
+                               class="btn btn-sm <?= $filter_status === 'unfilled' ? 'btn-danger'    : 'btn-outline-danger' ?>">
                                Pending</a>
                             <a href="?status=filled&mapping=<?= $filter_mapping ?>"
-                               class="btn <?= $filter_status === 'filled'   ? 'btn-success'   : 'btn-outline-success' ?>">
+                               class="btn btn-sm <?= $filter_status === 'filled'   ? 'btn-success'   : 'btn-outline-success' ?>">
                                Filled</a>
                             <a href="?status=skipped&mapping=<?= $filter_mapping ?>"
-                               class="btn <?= $filter_status === 'skipped'  ? 'btn-secondary' : 'btn-outline-secondary' ?>">
+                               class="btn btn-sm <?= $filter_status === 'skipped'  ? 'btn-secondary' : 'btn-outline-secondary' ?>">
                                Skipped</a>
                         </div>
-
-                        <!-- mapping dropdown removed -->
                         <input type="hidden" name="status" value="<?= htmlspecialchars($filter_status) ?>">
                     </form>
 
                     <?php if (!empty($bulk_candidates)): ?>
-                        <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status])) ?>" class="d-flex flex-wrap align-items-center gap-2">
-                            <button type="submit" name="autofill_pending_max" class="btn btn-warning btn-sm" title="Autofill all pending slots (max by day)" onclick="return confirm('Autofill all pending slots using maximum available attendance on each day? Slots without autofill source will be skipped.');">
-                                <i class="bi bi-magic"></i>
+                        <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status])) ?>" class="attendance-bulk-form">
+                            <button type="submit" name="autofill_pending_max" class="btn btn-warning btn-sm attendance-bulk-btn" title="Autofill all pending slots (max by day)" onclick="return confirm('Autofill all pending slots using maximum available attendance on each day? Slots without autofill source will be skipped.');">
+                                <i class="bi bi-magic me-1"></i>Autofill Pending
                             </button>
                         </form>
                     <?php endif; ?>
@@ -544,8 +542,8 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                             No slots match the current filter.
                         </div>
                     <?php else: ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0" style="font-size:0.875rem;">
+                        <div class="table-responsive attendance-table-wrap">
+                            <table class="table table-hover align-middle mb-0 attendance-table" style="font-size:0.875rem;">
                                 <thead class="table-light sticky-top">
                                     <tr>
                                         <th style="width:36px;">#</th>
@@ -585,18 +583,18 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                     elseif (!$slot['filled'])   $row_class = 'table-danger-subtle';
                                 ?>
                                 <tr class="<?= $row_class ?>">
-                                    <td class="text-muted"><?= $i + 1 ?></td>
-                                    <td>
+                                    <td class="text-muted" data-label="No."><?= $i + 1 ?></td>
+                                    <td data-label="Date">
                                         <strong><?= htmlspecialchars($slot['date']) ?></strong>
                                         <?php if ($is_today): ?>
                                             <span class="badge bg-warning text-dark ms-1">Today</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?= $dow_name ?></td>
-                                    <td><?= htmlspecialchars($slot['subject']) ?></td>
-                                    <td><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($slot['class']) ?></span></td>
-                                    <td><?= htmlspecialchars($slot['slot']) ?></td>
-                                    <td>
+                                    <td data-label="Day"><?= $dow_name ?></td>
+                                    <td data-label="Subject"><?= htmlspecialchars($slot['subject']) ?></td>
+                                    <td data-label="Class"><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($slot['class']) ?></span></td>
+                                    <td data-label="Slot"><?= htmlspecialchars($slot['slot']) ?></td>
+                                    <td data-label="Status" class="attendance-status-cell">
                                         <?php if ($slot['skipped']): ?>
                                             <span class="badge bg-secondary"><i class="bi bi-slash-circle me-1"></i>Skipped</span>
                                         <?php elseif ($slot['filled']): ?>
@@ -605,10 +603,11 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                             <span class="badge bg-danger">Pending</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="text-nowrap">
+                                    <td class="text-nowrap attendance-action-cell" data-label="Action">
+                                        <div class="attendance-actions">
                                         <?php if ($slot['skipped']): ?>
                                             <!-- Restore button -->
-                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline">
+                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline-flex">
                                                 <input type="hidden" name="restore_mapping_id" value="<?= (int)$slot['mapping_id'] ?>">
                                                 <input type="hidden" name="restore_date" value="<?= htmlspecialchars($slot['date']) ?>">
                                                 <button type="submit" name="restore_slot" class="btn btn-outline-secondary btn-sm" title="Restore this slot" onclick="return confirm('Restore this slot on <?= htmlspecialchars($slot['date']) ?>?')">
@@ -627,7 +626,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                                 Take Attendance
                                             </a>
                                             <!-- Skip button -->
-                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline">
+                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline-flex">
                                                 <input type="hidden" name="skip_mapping_id" value="<?= (int)$slot['mapping_id'] ?>">
                                                 <input type="hidden" name="skip_date" value="<?= htmlspecialchars($slot['date']) ?>">
                                                 <button type="submit" name="skip_slot" class="btn btn-outline-secondary btn-sm" title="Skip this slot (holiday/no class)" onclick="return confirm('Skip slot on <?= htmlspecialchars($slot['date']) ?>? It will be removed from pending.')">
@@ -635,6 +634,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                                 </button>
                                             </form>
                                         <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -687,6 +687,150 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 }
 .mapping-cta-btn:active {
     transform: translateY(0);
+}
+.attendance-filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+.attendance-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    flex: 1 1 420px;
+}
+.attendance-filter-label {
+    font-size: 0.76rem;
+    color: #64748b;
+    white-space: nowrap;
+}
+.attendance-filter-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+.attendance-filter-pills .btn {
+    padding: 0.22rem 0.55rem;
+    font-size: 0.74rem;
+    line-height: 1.15;
+    border-radius: 999px;
+    font-weight: 600;
+}
+.attendance-bulk-form {
+    margin: 0;
+}
+.attendance-bulk-btn {
+    min-height: 30px;
+    padding: 0.28rem 0.65rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 999px;
+}
+.attendance-stat-card {
+    border-radius: 0.9rem;
+}
+.attendance-stat-card .app-card-body {
+    padding-top: 0.72rem !important;
+    padding-bottom: 0.72rem !important;
+}
+.attendance-table-wrap {
+    overflow-x: auto;
+}
+.attendance-table {
+    min-width: 760px;
+}
+.attendance-table thead th {
+    font-size: 0.76rem;
+    padding: 0.68rem 0.6rem;
+    white-space: nowrap;
+}
+.attendance-table td {
+    padding: 0.62rem 0.6rem;
+    vertical-align: middle;
+}
+.attendance-table .badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.32rem 0.48rem;
+}
+.attendance-status-cell .badge {
+    min-width: 72px;
+    text-align: center;
+}
+.attendance-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+.attendance-actions .btn,
+.attendance-actions form {
+    margin: 0 !important;
+}
+.attendance-actions .btn {
+    padding: 0.28rem 0.52rem;
+    font-size: 0.74rem;
+    line-height: 1.15;
+}
+@media (max-width: 767.98px) {
+    .attendance-toolbar {
+        align-items: stretch !important;
+    }
+    .attendance-toolbar .app-page-title {
+        font-size: 1.2rem;
+    }
+    .mapping-cta-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.62rem 0.9rem;
+    }
+    .attendance-filters {
+        align-items: stretch;
+    }
+    .attendance-filter-form,
+    .attendance-bulk-form {
+        width: 100%;
+    }
+    .attendance-filter-label {
+        width: auto;
+        margin: 0;
+    }
+    .attendance-filter-pills {
+        width: auto;
+        flex: 1 1 auto;
+    }
+    .attendance-filter-pills .btn,
+    .attendance-bulk-btn {
+        flex: 0 0 auto;
+        justify-content: center;
+    }
+    .attendance-bulk-btn {
+        width: auto;
+    }
+    .attendance-table {
+        min-width: 680px;
+        font-size: 0.76rem !important;
+    }
+    .attendance-table thead th,
+    .attendance-table td {
+        padding: 0.5rem 0.45rem;
+    }
+    .attendance-table .badge {
+        font-size: 0.62rem;
+        padding: 0.22rem 0.38rem;
+    }
+    .sticky-top {
+        position: static;
+    }
+    .attendance-actions {
+        flex-wrap: nowrap;
+    }
 }
 </style>
 

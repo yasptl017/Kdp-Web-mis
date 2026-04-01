@@ -39,15 +39,27 @@ function parse_repeat_days_csv($csv) {
 $success_msg = '';
 $error_msg = '';
 
+$fac_id_stmt = $conn->prepare("SELECT id FROM faculty WHERE Name = ?");
+$fac_id_stmt->bind_param('s', $session_faculty_name);
+$fac_id_stmt->execute();
+$fac_row = $fac_id_stmt->get_result()->fetch_assoc();
+$fac_id_stmt->close();
+$logged_faculty_id = $fac_row ? (string)$fac_row['id'] : '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_mapping'])) {
     $del_id = (int)($_POST['delete_id'] ?? 0);
     if ($del_id > 0) {
         $stmt = $conn->prepare("DELETE FROM lecmapping WHERE id = ? AND faculty = ?");
         $stmt->bind_param('is', $del_id, $logged_faculty_id);
         $stmt->execute();
+        $deleted_rows = $stmt->affected_rows;
         $stmt->close();
-        $success_msg = 'Lecture mapping deleted.';
-        if ($edit_id === $del_id) {
+        if ($deleted_rows > 0) {
+            $success_msg = 'Lecture mapping deleted.';
+        } else {
+            $error_msg = 'Unable to delete lecture mapping.';
+        }
+        if ($deleted_rows > 0 && $edit_id === $del_id) {
             $edit_id = 0;
         }
     }
@@ -93,13 +105,6 @@ if ($term_result) {
     }
 }
 $default_term = $term_rows[0] ?? '';
-
-$fac_id_stmt = $conn->prepare("SELECT id FROM faculty WHERE Name = ?");
-$fac_id_stmt->bind_param('s', $session_faculty_name);
-$fac_id_stmt->execute();
-$fac_row = $fac_id_stmt->get_result()->fetch_assoc();
-$fac_id_stmt->close();
-$logged_faculty_id = $fac_row ? (string)$fac_row['id'] : '';
 
 $form_defaults = [
     'faculty' => $logged_faculty_id,

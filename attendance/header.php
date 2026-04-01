@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_login();
+$current_page = basename((string)($_SERVER['PHP_SELF'] ?? ''));
+$mapping_pages = [
+    'addLectureMapping.php',
+    'addLabMapping.php',
+    'addTutMapping.php',
+];
+$is_mapping_page = in_array($current_page, $mapping_pages, true);
 $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?? '')));
 ?>
 <header class="app-header fixed-top">
@@ -78,11 +85,23 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="addMapping.php">
+                    <li class="nav-item has-submenu">
+                        <a class="nav-link submenu-toggle <?= $is_mapping_page ? 'active' : '' ?>" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-add-mapping" aria-expanded="<?= $is_mapping_page ? 'true' : 'false' ?>" aria-controls="submenu-add-mapping">
                             <span class="nav-icon"><i class="bi bi-calendar-week"></i></span>
                             <span class="nav-link-text">Add Mapping</span>
+                            <span class="submenu-arrow">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </span>
                         </a>
+                        <div id="submenu-add-mapping" class="collapse submenu <?= $is_mapping_page ? 'show' : '' ?>" data-bs-parent="#menu-accordion">
+                            <ul class="submenu-list list-unstyled">
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'addLectureMapping.php' ? 'active' : '' ?>" href="addLectureMapping.php"><i class="bi bi-calendar-week me-1"></i>Lecture Mapping</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'addLabMapping.php' ? 'active' : '' ?>" href="addLabMapping.php"><i class="bi bi-diagram-3 me-1"></i>Lab Mapping</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'addTutMapping.php' ? 'active' : '' ?>" href="addTutMapping.php"><i class="bi bi-journal-check me-1"></i>Tutorial Mapping</a></li>
+                            </ul>
+                        </div>
                     </li>
 
                     <li class="nav-item">

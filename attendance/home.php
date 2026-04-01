@@ -56,7 +56,7 @@ require_login();
                             <h4 class="stats-type mb-0">Add Mapping</h4>
                             <p class="text-muted mb-0 mt-1" style="font-size:0.78rem;">Schedule lectures &amp; labs</p>
                         </div>
-                        <a class="app-card-link-mask" href="addMapping.php"></a>
+                        <a class="app-card-link-mask" href="addLectureMapping.php"></a>
                     </div>
                 </div>
 
