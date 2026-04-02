@@ -6,7 +6,6 @@ if (trim((string)($_SESSION['Name'] ?? '')) !== '') {
 }
 
 include('dbconfig.php');
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['signin-password'];

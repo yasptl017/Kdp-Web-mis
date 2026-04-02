@@ -36,6 +36,24 @@ function parse_repeat_days_csv($csv) {
     return normalize_repeat_days(explode(',', (string)$csv));
 }
 
+function compare_terms_desc($left, $right) {
+    return strnatcmp((string)$right, (string)$left);
+}
+
+function group_mappings_by_term(array $mappings) {
+    $grouped = [];
+    foreach ($mappings as $mapping) {
+        $term = (string)($mapping['term'] ?? '');
+        if (!isset($grouped[$term])) {
+            $grouped[$term] = [];
+        }
+        $grouped[$term][] = $mapping;
+    }
+
+    uksort($grouped, 'compare_terms_desc');
+    return $grouped;
+}
+
 $success_msg = '';
 $error_msg = '';
 
@@ -218,6 +236,16 @@ if ($res) {
         $mappings[] = $row;
     }
 }
+$grouped_mappings = group_mappings_by_term($mappings);
+$open_terms = [];
+if (!empty($grouped_mappings)) {
+    $grouped_terms = array_keys($grouped_mappings);
+    $open_terms[] = (string)$grouped_terms[0];
+}
+if ($is_edit_mode && !empty($form_values['term'])) {
+    $open_terms[] = (string)$form_values['term'];
+}
+$open_terms = array_values(array_unique($open_terms));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -281,12 +309,48 @@ if ($res) {
                 <div class="col-12 col-lg-7">
                     <div class="app-card shadow-sm"><div class="app-card-body">
                         <h4 class="mb-3">Existing Lecture Mappings</h4>
-                        <?php if (!empty($mappings)): ?>
-                        <div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0" style="font-size:0.82rem;"><thead class="table-light"><tr><th>Faculty</th><th>Term / Sem</th><th>Subject</th><th>Class</th><th>Slot</th><th>Period</th><th>Days</th><th></th></tr></thead><tbody>
-                        <?php foreach ($mappings as $m): $days = parse_repeat_days_csv($m['repeat_days']); $days_text = implode(', ', array_map(fn($d)=>$day_names[$d] ?? (string)$d, $days)); ?>
-                        <tr class="<?= ($is_edit_mode && $edit_id === (int)$m['id']) ? 'table-warning' : '' ?>"><td><?= htmlspecialchars($m['faculty_name'] ?? $m['faculty']) ?></td><td><?= htmlspecialchars($m['term']) ?><br><small class="text-muted">Sem <?= htmlspecialchars($m['sem']) ?></small></td><td><?= htmlspecialchars($m['subject']) ?></td><td><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($m['class']) ?></span></td><td><?= htmlspecialchars($m['slot']) ?></td><td style="white-space:nowrap;"><?= htmlspecialchars($m['start_date']) ?><br><?= htmlspecialchars($m['end_date']) ?></td><td><?= htmlspecialchars($days_text) ?></td><td><div class="d-flex gap-1"><a href="addLectureMapping.php?edit_id=<?= (int)$m['id'] ?><?= $is_embedded ? '&embedded=1' : '' ?>" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a><form method="POST" action="<?= htmlspecialchars($base_self_url) ?>" onsubmit="return confirm('Delete this lecture mapping?')"><input type="hidden" name="delete_id" value="<?= (int)$m['id'] ?>"><button type="submit" name="delete_mapping" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button></form></div></td></tr>
-                        <?php endforeach; ?>
-                        </tbody></table></div>
+                        <?php if (!empty($grouped_mappings)): ?>
+                        <div class="accordion" id="lectureMappingAccordion">
+                            <?php foreach ($grouped_mappings as $term => $term_mappings): ?>
+                                <?php
+                                    $accordion_id = 'lecture-term-' . preg_replace('/[^a-zA-Z0-9_-]/', '-', (string)$term);
+                                    $is_open = in_array((string)$term, $open_terms, true);
+                                ?>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="<?= htmlspecialchars($accordion_id) ?>-header">
+                                        <button class="accordion-button <?= $is_open ? '' : 'collapsed' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#<?= htmlspecialchars($accordion_id) ?>" aria-expanded="<?= $is_open ? 'true' : 'false' ?>" aria-controls="<?= htmlspecialchars($accordion_id) ?>">
+                                            <span class="fw-semibold">Term <?= htmlspecialchars($term) ?></span>
+                                            <span class="badge bg-light text-dark border ms-2" style="color: black;"><?= count($term_mappings) ?> mapping<?= count($term_mappings) === 1 ? '' : 's' ?></span>
+                                        </button>
+                                    </h2>
+                                    <div id="<?= htmlspecialchars($accordion_id) ?>" class="accordion-collapse collapse <?= $is_open ? 'show' : '' ?>" aria-labelledby="<?= htmlspecialchars($accordion_id) ?>-header">
+                                        <div class="accordion-body px-0 pb-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-hover align-middle mb-0" style="font-size:0.82rem;">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Faculty</th>
+                                                            <th>Sem</th>
+                                                            <th>Subject</th>
+                                                            <th>Class</th>
+                                                            <th>Slot</th>
+                                                            <th>Period</th>
+                                                            <th>Days</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php foreach ($term_mappings as $m): $days = parse_repeat_days_csv($m['repeat_days']); $days_text = implode(', ', array_map(fn($d)=>$day_names[$d] ?? (string)$d, $days)); ?>
+                                                    <tr class="<?= ($is_edit_mode && $edit_id === (int)$m['id']) ? 'table-warning' : '' ?>"><td><?= htmlspecialchars($m['faculty_name'] ?? $m['faculty']) ?></td><td><small class="text-muted">Sem <?= htmlspecialchars($m['sem']) ?></small></td><td><?= htmlspecialchars($m['subject']) ?></td><td><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($m['class']) ?></span></td><td><?= htmlspecialchars($m['slot']) ?></td><td style="white-space:nowrap;"><?= htmlspecialchars($m['start_date']) ?><br><?= htmlspecialchars($m['end_date']) ?></td><td><?= htmlspecialchars($days_text) ?></td><td><div class="d-flex gap-1"><a href="addLectureMapping.php?edit_id=<?= (int)$m['id'] ?><?= $is_embedded ? '&embedded=1' : '' ?>" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a><form method="POST" action="<?= htmlspecialchars($base_self_url) ?>" onsubmit="return confirm('Delete this lecture mapping?')"><input type="hidden" name="delete_id" value="<?= (int)$m['id'] ?>"><button type="submit" name="delete_mapping" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button></form></div></td></tr>
+                                                    <?php endforeach; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                         <?php else: ?><div class="alert alert-info mb-0">No lecture mappings yet.</div><?php endif; ?>
                     </div></div>
                 </div>

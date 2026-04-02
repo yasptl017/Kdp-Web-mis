@@ -7,6 +7,24 @@ $is_embedded = isset($_GET['embedded']) && $_GET['embedded'] === '1';
 $base_self_url = 'addLabMapping.php' . ($is_embedded ? '?embedded=1' : '');
 $default_date = date('Y-m-d');
 
+function compare_terms_desc($left, $right) {
+    return strnatcmp((string)$right, (string)$left);
+}
+
+function group_mappings_by_term(array $mappings) {
+    $grouped = [];
+    foreach ($mappings as $mapping) {
+        $term = (string)($mapping['term'] ?? '');
+        if (!isset($grouped[$term])) {
+            $grouped[$term] = [];
+        }
+        $grouped[$term][] = $mapping;
+    }
+
+    uksort($grouped, 'compare_terms_desc');
+    return $grouped;
+}
+
 // Auto-create table if missing
 $conn->query("CREATE TABLE IF NOT EXISTS `labmapping` (
     `id`          INT          NOT NULL AUTO_INCREMENT,
@@ -204,6 +222,22 @@ $mappings_stmt->bind_param('s', $logged_faculty_id);
 $mappings_stmt->execute();
 $mappings_result = $mappings_stmt->get_result();
 $mappings_stmt->close();
+$mappings = [];
+if ($mappings_result) {
+    while ($row = $mappings_result->fetch_assoc()) {
+        $mappings[] = $row;
+    }
+}
+$grouped_mappings = group_mappings_by_term($mappings);
+$open_terms = [];
+if (!empty($grouped_mappings)) {
+    $grouped_terms = array_keys($grouped_mappings);
+    $open_terms[] = (string)$grouped_terms[0];
+}
+if ($is_edit_mode && !empty($form_values['term'])) {
+    $open_terms[] = (string)$form_values['term'];
+}
+$open_terms = array_values(array_unique($open_terms));
 $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 ?>
 <!DOCTYPE html>
@@ -391,57 +425,77 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     <div class="app-card shadow-sm">
                         <div class="app-card-body">
                             <h4 class="mb-3">Existing Lab Mappings</h4>
-                            <?php if ($mappings_result && $mappings_result->num_rows > 0): ?>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-hover align-middle mb-0" style="font-size:0.82rem;">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Faculty</th>
-                                                <th>Term / Sem</th>
-                                                <th>Subject</th>
-                                                <th>Batch</th>
-                                                <th>Lab</th>
-                                                <th>Slot</th>
-                                                <th>Period</th>
-                                                <th>Days</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php while ($m = $mappings_result->fetch_assoc()): ?>
-                                            <?php
-                                                $days_arr = array_values(array_unique(array_filter(
-                                                    array_map('intval', explode(',', (string)$m['repeat_days'])),
-                                                    static fn($day) => $day >= 0 && $day <= 6
-                                                )));
-                                                $days_str = implode(', ', array_map(static fn($day) => $day_names[$day] ?? (string)$day, $days_arr));
-                                            ?>
-                                            <tr class="<?= ($is_edit_mode && $edit_id === (int)$m['id']) ? 'table-warning' : '' ?>">
-                                                <td><?= htmlspecialchars($m['faculty_name'] ?? $m['faculty']) ?></td>
-                                                <td><?= htmlspecialchars($m['term']) ?><br><small class="text-muted">Sem <?= htmlspecialchars($m['sem']) ?></small></td>
-                                                <td><?= htmlspecialchars($m['subject']) ?></td>
-                                                <td><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($m['batch']) ?></span></td>
-                                                <td><?= htmlspecialchars($m['labNo']) ?></td>
-                                                <td><?= htmlspecialchars($m['slot']) ?></td>
-                                                <td style="white-space:nowrap;"><?= htmlspecialchars($m['start_date']) ?><br><?= htmlspecialchars($m['end_date']) ?></td>
-                                                <td><?= htmlspecialchars($days_str) ?></td>
-                                                <td>
-                                                    <div class="d-flex gap-1">
-                                                        <a href="addLabMapping.php?edit_id=<?= (int)$m['id'] ?><?= $is_embedded ? '&embedded=1' : '' ?>" class="btn btn-outline-warning btn-sm" title="Edit lab mapping">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form method="POST" action="<?= htmlspecialchars($base_self_url) ?>" onsubmit="return confirm('Delete this lab mapping?')">
-                                                            <input type="hidden" name="delete_id" value="<?= (int)$m['id'] ?>">
-                                                            <button type="submit" name="delete_mapping" class="btn btn-outline-danger btn-sm">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
+                            <?php if (!empty($grouped_mappings)): ?>
+                                <div class="accordion" id="labMappingAccordion">
+                                    <?php foreach ($grouped_mappings as $term => $term_mappings): ?>
+                                        <?php
+                                            $accordion_id = 'lab-term-' . preg_replace('/[^a-zA-Z0-9_-]/', '-', (string)$term);
+                                            $is_open = in_array((string)$term, $open_terms, true);
+                                        ?>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="<?= htmlspecialchars($accordion_id) ?>-header">
+                                                <button class="accordion-button <?= $is_open ? '' : 'collapsed' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#<?= htmlspecialchars($accordion_id) ?>" aria-expanded="<?= $is_open ? 'true' : 'false' ?>" aria-controls="<?= htmlspecialchars($accordion_id) ?>">
+                                                    <span class="fw-semibold">Term <?= htmlspecialchars($term) ?></span>
+                                                    <span class="badge bg-light text-dark border ms-2" style="color: black"><?= count($term_mappings) ?> mapping<?= count($term_mappings) === 1 ? '' : 's' ?></span>
+                                                </button>
+                                            </h2>
+                                            <div id="<?= htmlspecialchars($accordion_id) ?>" class="accordion-collapse collapse <?= $is_open ? 'show' : '' ?>" aria-labelledby="<?= htmlspecialchars($accordion_id) ?>-header">
+                                                <div class="accordion-body px-0 pb-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm table-hover align-middle mb-0" style="font-size:0.82rem;">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th>Faculty</th>
+                                                                    <th>Sem</th>
+                                                                    <th>Subject</th>
+                                                                    <th>Batch</th>
+                                                                    <th>Lab</th>
+                                                                    <th>Slot</th>
+                                                                    <th>Period</th>
+                                                                    <th>Days</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <?php foreach ($term_mappings as $m): ?>
+                                                                <?php
+                                                                    $days_arr = array_values(array_unique(array_filter(
+                                                                        array_map('intval', explode(',', (string)$m['repeat_days'])),
+                                                                        static fn($day) => $day >= 0 && $day <= 6
+                                                                    )));
+                                                                    $days_str = implode(', ', array_map(static fn($day) => $day_names[$day] ?? (string)$day, $days_arr));
+                                                                ?>
+                                                                <tr class="<?= ($is_edit_mode && $edit_id === (int)$m['id']) ? 'table-warning' : '' ?>">
+                                                                    <td><?= htmlspecialchars($m['faculty_name'] ?? $m['faculty']) ?></td>
+                                                                    <td><small class="text-muted">Sem <?= htmlspecialchars($m['sem']) ?></small></td>
+                                                                    <td><?= htmlspecialchars($m['subject']) ?></td>
+                                                                    <td><span class="badge bg-primary-subtle text-dark border"><?= htmlspecialchars($m['batch']) ?></span></td>
+                                                                    <td><?= htmlspecialchars($m['labNo']) ?></td>
+                                                                    <td><?= htmlspecialchars($m['slot']) ?></td>
+                                                                    <td style="white-space:nowrap;"><?= htmlspecialchars($m['start_date']) ?><br><?= htmlspecialchars($m['end_date']) ?></td>
+                                                                    <td><?= htmlspecialchars($days_str) ?></td>
+                                                                    <td>
+                                                                        <div class="d-flex gap-1">
+                                                                            <a href="addLabMapping.php?edit_id=<?= (int)$m['id'] ?><?= $is_embedded ? '&embedded=1' : '' ?>" class="btn btn-outline-warning btn-sm" title="Edit lab mapping">
+                                                                                <i class="bi bi-pencil"></i>
+                                                                            </a>
+                                                                            <form method="POST" action="<?= htmlspecialchars($base_self_url) ?>" onsubmit="return confirm('Delete this lab mapping?')">
+                                                                                <input type="hidden" name="delete_id" value="<?= (int)$m['id'] ?>">
+                                                                                <button type="submit" name="delete_mapping" class="btn btn-outline-danger btn-sm">
+                                                                                    <i class="bi bi-trash"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        <?php endwhile; ?>
-                                        </tbody>
-                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
                             <?php else: ?>
                                 <div class="alert alert-info mb-0"><i class="bi bi-info-circle me-1"></i>No lab mappings yet. Create one on the left.</div>
