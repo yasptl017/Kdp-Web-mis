@@ -27,9 +27,11 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                     </div>
 
                     <div class="app-search-box col">
-                        <form class="app-search-form" method="GET" action="studentAttendance.php">
-                            <input type="text" placeholder="Search Enrollment No..." name="enrollment" value="<?= $header_enrollment_search; ?>" class="form-control search-input">
-                            <button type="submit" class="btn search-btn btn-primary" value="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <form class="app-search-form" method="GET" action="studentAttendance.php" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="flex: 1; position: relative;">
+                                <input type="text" placeholder="Search Enrollment No..." name="enrollment" value="<?= $header_enrollment_search; ?>" class="form-control search-input" style="padding-right: 2.75rem; padding-left: 0.9rem; height: 40px; border-radius: 0.35rem; border: 1px solid #ddd;">
+                                <button type="submit" class="btn search-btn btn-primary" style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border: none; background: transparent; color: #667eea; cursor: pointer; font-size: 0.95rem;" value="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </div>
                         </form>
                     </div>
 
@@ -79,7 +81,7 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="myAttendance.php">
+                        <a class="nav-link" href="myAttendanceSelect.php">
                             <span class="nav-icon"><i class="bi bi-calendar2-check"></i></span>
                             <span class="nav-link-text">My Attendance</span>
                         </a>

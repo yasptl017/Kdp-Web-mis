@@ -24,6 +24,10 @@ function ensure_lecture_attendance_columns(mysqli $conn): void {
 
 ensure_lecture_attendance_columns($conn);
 
+function compare_terms_desc($left, $right) {
+    return strnatcmp((string)$right, (string)$left);
+}
+
 // ── Auto-create lecmapping table if missing ───────────────────────────────────
 $conn->query("CREATE TABLE IF NOT EXISTS `lecmapping` (
     `id`          INT          NOT NULL AUTO_INCREMENT,
@@ -63,7 +67,8 @@ $success_msg = trim((string)($_GET['msg'] ?? ''));
 $error_msg = trim((string)($_GET['err'] ?? ''));
 
 // ── Filters from GET ──────────────────────────────────────────────────────────
-$filter_status  = $_GET['status']  ?? 'all';   // all | filled | unfilled
+$filter_term    = trim((string)($_GET['term'] ?? ''));
+$filter_status  = $_GET['status']  ?? 'unfilled';   // all | filled | unfilled | skipped
 $filter_mapping = (int)($_GET['mapping'] ?? 0); // specific mapping id, 0 = all
 
 // ── Load all mappings for this faculty ───────────────────────────────────────
@@ -72,6 +77,21 @@ $mappings_stmt->bind_param('s', $logged_faculty_id);
 $mappings_stmt->execute();
 $mappings_rows = $mappings_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $mappings_stmt->close();
+
+$available_terms = [];
+foreach ($mappings_rows as $mapping_row) {
+    $term_value = trim((string)($mapping_row['term'] ?? ''));
+    if ($term_value !== '') {
+        $available_terms[$term_value] = true;
+    }
+}
+$available_terms = array_keys($available_terms);
+usort($available_terms, 'compare_terms_desc');
+
+if ($filter_term === '') {
+    header('Location: myAttendanceSelect.php');
+    exit();
+}
 
 // ── Load exceptions for this faculty's mappings ───────────────────────────────
 $exceptions_set = []; // "mapping_id|date" => true
@@ -92,22 +112,25 @@ if (!empty($mappings_rows)) {
 // ── Expand each mapping into individual date slots ───────────────────────────
 // slot_list: array of [mapping_id, date, faculty, term, sem, subject, class, slot, skipped]
 $slot_list = [];
-foreach ($mappings_rows as $m) {
+if ($filter_term !== '') {
+    foreach ($mappings_rows as $m) {
+    $mapping_term = trim((string)($m['term'] ?? ''));
     if ($filter_mapping > 0 && $m['id'] !== $filter_mapping) continue;
+        if (strcasecmp($mapping_term, $filter_term) !== 0) continue;
 
-    $repeat_days = array_map('intval', explode(',', $m['repeat_days']));
-    $cur = new DateTime($m['start_date']);
-    $end = new DateTime($m['end_date']);
-    $today = new DateTime('today');
-    if ($end > $today) {
-        $end = $today;
-    }
-    if ($cur > $end) {
-        continue;
-    }
-    $end->modify('+1 day'); // make end inclusive
+        $repeat_days = array_map('intval', explode(',', $m['repeat_days']));
+        $cur = new DateTime($m['start_date']);
+        $end = new DateTime($m['end_date']);
+        $today = new DateTime('today');
+        if ($end > $today) {
+            $end = $today;
+        }
+        if ($cur > $end) {
+            continue;
+        }
+        $end->modify('+1 day'); // make end inclusive
 
-    while ($cur < $end) {
+        while ($cur < $end) {
         $dow = (int)$cur->format('w'); // 0=Sun … 6=Sat
         if (in_array($dow, $repeat_days, true)) {
             $date_str = $cur->format('Y-m-d');
@@ -115,7 +138,7 @@ foreach ($mappings_rows as $m) {
                 'mapping_id' => $m['id'],
                 'date'       => $date_str,
                 'faculty'    => $m['faculty'],
-                'term'       => $m['term'],
+                'term'       => $mapping_term,
                 'sem'        => $m['sem'],
                 'subject'    => $m['subject'],
                 'class'      => $m['class'],
@@ -124,6 +147,7 @@ foreach ($mappings_rows as $m) {
             ];
         }
         $cur->modify('+1 day');
+    }
     }
 }
 
@@ -170,6 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['autofill_pending_max'
     $redirect_params = [
         'status' => $filter_status,
         'mapping' => $filter_mapping,
+        'term' => $filter_term,
     ];
 
     if (empty($bulk_candidates)) {
@@ -370,7 +395,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['autofill_pending_max'
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['skip_slot'])) {
     $skip_mapping_id = (int)($_POST['skip_mapping_id'] ?? 0);
     $skip_date       = trim((string)($_POST['skip_date'] ?? ''));
-    $redirect_params = ['status' => $filter_status, 'mapping' => $filter_mapping];
+    $redirect_params = ['status' => $filter_status, 'mapping' => $filter_mapping, 'term' => $filter_term];
 
     if ($skip_mapping_id > 0 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $skip_date)) {
         $stmt = $conn->prepare("INSERT IGNORE INTO lecmapping_exceptions (mapping_id, date) VALUES (?, ?)");
@@ -389,7 +414,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['skip_slot'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_slot'])) {
     $restore_mapping_id = (int)($_POST['restore_mapping_id'] ?? 0);
     $restore_date       = trim((string)($_POST['restore_date'] ?? ''));
-    $redirect_params = ['status' => $filter_status, 'mapping' => $filter_mapping];
+    $redirect_params = ['status' => $filter_status, 'mapping' => $filter_mapping, 'term' => $filter_term];
 
     if ($restore_mapping_id > 0 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $restore_date)) {
         $stmt = $conn->prepare("DELETE FROM lecmapping_exceptions WHERE mapping_id = ? AND date = ?");
@@ -406,7 +431,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_slot'])) {
 
 // ── Apply status filter ───────────────────────────────────────────────────────
 // Stats computed before filter (on all slots including skipped)
-$total_skipped = count(array_filter($slot_list, fn($s) => $s['skipped']));
+$stats_slot_list = $slot_list;
+$total_skipped = count(array_filter($stats_slot_list, fn($s) => $s['skipped']));
 
 if ($filter_status === 'filled') {
     $slot_list = array_values(array_filter($slot_list, fn($s) => $s['filled']));
@@ -425,9 +451,9 @@ while ($fr = $fres->fetch_assoc()) {
 }
 
 // Stats (computed on the full unfiltered list)
-$total    = count($slot_list);
-$filled   = count(array_filter($slot_list, fn($s) => $s['filled']));
-$skipped  = count(array_filter($slot_list, fn($s) => $s['skipped']));
+$total    = count($stats_slot_list);
+$filled   = count(array_filter($stats_slot_list, fn($s) => $s['filled']));
+$skipped  = count(array_filter($stats_slot_list, fn($s) => $s['skipped']));
 $unfilled = $total - $filled - $skipped;
 
 $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -463,87 +489,109 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 </div>
             <?php else: ?>
 
-            <!-- Stats row -->
-            <div class="row g-3 mb-3 attendance-stats-row">
-                <div class="col-6 col-md-3 col-xl-2">
-                    <div class="app-card shadow-sm text-center attendance-stat-card">
-                        <div class="app-card-body py-2">
-                            <div class="fs-4 fw-bold"><?= $total ?></div>
-                            <div class="text-muted" style="font-size:0.75rem;">Total</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 col-xl-2">
-                    <div class="app-card shadow-sm text-center attendance-stat-card">
-                        <div class="app-card-body py-2">
-                            <div class="fs-4 fw-bold text-success"><?= $filled ?></div>
-                            <div class="text-muted" style="font-size:0.75rem;">Filled</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 col-xl-2">
-                    <div class="app-card shadow-sm text-center attendance-stat-card">
-                        <div class="app-card-body py-2">
-                            <div class="fs-4 fw-bold text-danger"><?= $unfilled ?></div>
-                            <div class="text-muted" style="font-size:0.75rem;">Pending</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 col-xl-2">
-                    <div class="app-card shadow-sm text-center attendance-stat-card">
-                        <div class="app-card-body py-2">
-                            <div class="fs-4 fw-bold text-secondary"><?= $skipped ?></div>
-                            <div class="text-muted" style="font-size:0.75rem;">Skipped</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="app-card shadow-sm mb-3">
-                <div class="app-card-body py-3">
-                    <div class="attendance-filters">
-                    <form method="GET" action="myAttendance.php" class="attendance-filter-form">
-                        <span class="fw-semibold attendance-filter-label">Filter:</span>
-
-                        <div class="attendance-filter-pills" role="group" aria-label="Attendance filters">
-                            <a href="?status=all&mapping=<?= $filter_mapping ?>"
-                               class="btn btn-sm <?= $filter_status === 'all'      ? 'btn-secondary' : 'btn-outline-secondary' ?>">All</a>
-                            <a href="?status=unfilled&mapping=<?= $filter_mapping ?>"
-                               class="btn btn-sm <?= $filter_status === 'unfilled' ? 'btn-danger'    : 'btn-outline-danger' ?>">
-                               Pending</a>
-                            <a href="?status=filled&mapping=<?= $filter_mapping ?>"
-                               class="btn btn-sm <?= $filter_status === 'filled'   ? 'btn-success'   : 'btn-outline-success' ?>">
-                               Filled</a>
-                            <a href="?status=skipped&mapping=<?= $filter_mapping ?>"
-                               class="btn btn-sm <?= $filter_status === 'skipped'  ? 'btn-secondary' : 'btn-outline-secondary' ?>">
-                               Skipped</a>
-                        </div>
-                        <input type="hidden" name="status" value="<?= htmlspecialchars($filter_status) ?>">
-                    </form>
-
-                    <?php if (!empty($bulk_candidates)): ?>
-                        <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status])) ?>" class="attendance-bulk-form">
-                            <button type="submit" name="autofill_pending_max" class="btn btn-warning btn-sm attendance-bulk-btn" title="Autofill all pending slots (max by day)" onclick="return confirm('Autofill all pending slots using maximum available attendance on each day? Slots without autofill source will be skipped.');">
-                                <i class="bi bi-magic me-1"></i>Autofill Pending
-                            </button>
-                        </form>
-                    <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slot list -->
+            <?php if ($filter_term === ''): ?>
             <div class="app-card shadow-sm">
+                <div class="app-card-body py-4">
+                    <div class="attendance-term-picker text-center">
+                        <h4 class="mb-2">Select Term</h4>
+                        <p class="text-muted mb-4">Choose a term to open its attendance page. Pending will be selected by default.</p>
+                        <div class="attendance-term-badges">
+                            <?php foreach ($available_terms as $term_option): ?>
+                                <a href="myAttendance.php?<?= htmlspecialchars(http_build_query(['term' => $term_option, 'status' => 'unfilled'])) ?>" class="attendance-term-badge">
+                                    <?= htmlspecialchars($term_option) ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
+
+            <div class="app-card shadow-sm mb-1 attendance-shell-card">
+                <div class="app-card-body py-1 px-2 d-flex justify-content-between align-items-center flex-wrap gap-1 attendance-top-strip">
+                    <div class="attendance-current-term">
+                        <span class="attendance-current-term-label">Term</span>
+                        <span class="attendance-current-term-value"><?= htmlspecialchars($filter_term) ?></span>
+                    </div>
+                    <a href="myAttendanceSelect.php" class="btn btn-sm attendance-compact-btn attendance-change-btn">Change Term</a>
+                </div>
+            </div>
+
+            <div class="row g-2 mb-1 attendance-stats-row">
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card attendance-stat-card-compact attendance-shell-card">
+                        <div class="app-card-body py-2">
+                            <div class="attendance-stat-value"><?= $total ?></div>
+                            <div class="attendance-stat-label">Total</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card attendance-stat-card-compact attendance-shell-card">
+                        <div class="app-card-body py-2">
+                            <div class="attendance-stat-value text-success"><?= $filled ?></div>
+                            <div class="attendance-stat-label">Filled</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card attendance-stat-card-compact attendance-shell-card">
+                        <div class="app-card-body py-2">
+                            <div class="attendance-stat-value text-danger"><?= $unfilled ?></div>
+                            <div class="attendance-stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-xl-2">
+                    <div class="app-card shadow-sm text-center attendance-stat-card attendance-stat-card-compact attendance-shell-card">
+                        <div class="app-card-body py-2">
+                            <div class="attendance-stat-value text-secondary"><?= $skipped ?></div>
+                            <div class="attendance-stat-label">Skipped</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-card shadow-sm mb-1 attendance-shell-card">
+                <div class="app-card-body py-1 px-2">
+                    <div class="attendance-filter-panel">
+                        <div class="attendance-filter-row">
+                            <span class="attendance-filter-label">Filter</span>
+                            <div class="attendance-filter-pills" role="group" aria-label="Attendance filters">
+                                <a href="?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => 'all', 'mapping' => $filter_mapping])) ?>"
+                                   class="btn btn-sm <?= $filter_status === 'all' ? 'btn-secondary' : 'btn-outline-secondary' ?>">All</a>
+                                <a href="?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => 'unfilled', 'mapping' => $filter_mapping])) ?>"
+                                   class="btn btn-sm <?= $filter_status === 'unfilled' ? 'btn-danger' : 'btn-outline-danger' ?>">Pending</a>
+                                <a href="?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => 'filled', 'mapping' => $filter_mapping])) ?>"
+                                   class="btn btn-sm <?= $filter_status === 'filled' ? 'btn-success' : 'btn-outline-success' ?>">Filled</a>
+                                <a href="?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => 'skipped', 'mapping' => $filter_mapping])) ?>"
+                                   class="btn btn-sm <?= $filter_status === 'skipped' ? 'btn-secondary' : 'btn-outline-secondary' ?>">Skipped</a>
+                            </div>
+                        </div>
+
+                        <?php if (!empty($bulk_candidates)): ?>
+                            <div class="attendance-filter-actions">
+                                <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="attendance-bulk-form">
+                                    <button type="submit" name="autofill_pending_max" class="btn btn-warning btn-sm attendance-bulk-btn" title="Autofill all pending slots (max by day)" onclick="return confirm('Autofill all pending slots using maximum available attendance on each day? Slots without autofill source will be skipped.');">
+                                        <i class="bi bi-stars me-1"></i>Autofill Pending
+                                    </button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-card shadow-sm attendance-shell-card">
                 <div class="app-card-body p-0">
                     <?php if (empty($slot_list)): ?>
                         <div class="p-4 text-center text-muted">
                             <i class="bi bi-calendar-x display-6 d-block mb-2"></i>
-                            No slots match the current filter.
+                            No slots match the current filter for term <?= htmlspecialchars($filter_term) ?>.
                         </div>
                     <?php else: ?>
                         <div class="table-responsive attendance-table-wrap">
-                            <table class="table table-hover align-middle mb-0 attendance-table" style="font-size:0.875rem;">
+                            <table id="attendanceDataTable" class="table table-hover align-middle mb-0 attendance-table" style="font-size:0.875rem;">
                                 <thead class="table-light sticky-top">
                                     <tr>
                                         <th style="width:36px;">#</th>
@@ -561,8 +609,6 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                     $date_obj = new DateTime($slot['date']);
                                     $dow_name = $day_names[(int)$date_obj->format('w')];
                                     $is_today = ($slot['date'] === date('Y-m-d'));
-
-                                    // Build URL to takelecatt.php
                                     $params = http_build_query([
                                         'faculty' => $slot['faculty'],
                                         'term'    => $slot['term'],
@@ -575,12 +621,10 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                     $take_url = 'takelecatt.php?' . $params;
                                     $edit_url = $slot['filled'] ? 'editlecatt.php?id=' . $slot['attendance_id'] : null;
                                     $summary_url = $slot['filled'] ? 'attendanceSummary.php?type=lecture&id=' . $slot['attendance_id'] : null;
-                                ?>
-                                <?php
                                     $row_class = '';
-                                    if ($slot['skipped'])       $row_class = 'table-secondary skip-row';
+                                    if ($slot['skipped']) $row_class = 'table-secondary skip-row';
                                     elseif (!$slot['filled'] && $is_today) $row_class = 'table-warning';
-                                    elseif (!$slot['filled'])   $row_class = 'table-danger-subtle';
+                                    elseif (!$slot['filled']) $row_class = 'table-danger-subtle';
                                 ?>
                                 <tr class="<?= $row_class ?>">
                                     <td class="text-muted" data-label="No."><?= $i + 1 ?></td>
@@ -606,8 +650,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                     <td class="text-nowrap attendance-action-cell" data-label="Action">
                                         <div class="attendance-actions">
                                         <?php if ($slot['skipped']): ?>
-                                            <!-- Restore button -->
-                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline-flex">
+                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline-flex">
                                                 <input type="hidden" name="restore_mapping_id" value="<?= (int)$slot['mapping_id'] ?>">
                                                 <input type="hidden" name="restore_date" value="<?= htmlspecialchars($slot['date']) ?>">
                                                 <button type="submit" name="restore_slot" class="btn btn-outline-secondary btn-sm" title="Restore this slot" onclick="return confirm('Restore this slot on <?= htmlspecialchars($slot['date']) ?>?')">
@@ -625,8 +668,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                                             <a href="<?= htmlspecialchars($take_url) ?>" class="btn btn-warning btn-sm me-1">
                                                 Take Attendance
                                             </a>
-                                            <!-- Skip button -->
-                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline-flex">
+                                            <form method="POST" action="myAttendance.php?<?= htmlspecialchars(http_build_query(['term' => $filter_term, 'status' => $filter_status, 'mapping' => $filter_mapping])) ?>" class="d-inline-flex">
                                                 <input type="hidden" name="skip_mapping_id" value="<?= (int)$slot['mapping_id'] ?>">
                                                 <input type="hidden" name="skip_date" value="<?= htmlspecialchars($slot['date']) ?>">
                                                 <button type="submit" name="skip_slot" class="btn btn-outline-secondary btn-sm" title="Skip this slot (holiday/no class)" onclick="return confirm('Skip slot on <?= htmlspecialchars($slot['date']) ?>? It will be removed from pending.')">
@@ -644,6 +686,7 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     <?php endif; ?>
                 </div>
             </div>
+            <?php endif; ?>
 
             <?php endif; ?>
         </div>
@@ -670,13 +713,14 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 .mapping-cta-btn {
     color: #fff;
     border: 0;
-    border-radius: 0.4rem;
+    border-radius: 0.6rem;
     background: linear-gradient(135deg, #1f7a8c, #2a9d8f);
-    box-shadow: 0 10px 24px rgba(31, 122, 140, 0.22);
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    padding: 0.45rem 1rem;
+    box-shadow: 0 12px 28px rgba(31, 122, 140, 0.28);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 0.65rem 1.2rem;
     transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    font-size: 1rem;
 }
 .mapping-cta-btn:hover,
 .mapping-cta-btn:focus {
@@ -688,85 +732,255 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 .mapping-cta-btn:active {
     transform: translateY(0);
 }
-.attendance-filters {
+.attendance-term-picker {
+    max-width: 720px;
+    margin: 0 auto;
+}
+.attendance-term-badges {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.65rem;
+    justify-content: center;
+    gap: 1rem;
     flex-wrap: wrap;
 }
-.attendance-filter-form {
+.attendance-term-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 130px;
+    padding: 0.85rem 1.25rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #eef6ff, #dbeafe);
+    border: 2px solid #93c5fd;
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.attendance-term-badge:hover,
+.attendance-term-badge:focus {
+    color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.22);
+    background: linear-gradient(135deg, #bfdbfe, #7dd3fc);
+}
+.attendance-filters {
+    display: block;
+}
+.attendance-top-strip {
+    min-height: 0;
+    gap: 0.35rem;
+    flex-wrap: nowrap;
+}
+.attendance-shell-card {
+    border-radius: 0.7rem;
+}
+.attendance-shell-card .app-card-body {
+    padding: 0.3rem 0.45rem !important;
+}
+.attendance-current-term {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    flex-wrap: wrap;
+}
+.attendance-current-term-label {
+    font-size: 0.62rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.attendance-current-term-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: #eef6ff;
+    border: 1px solid #bfdbfe;
+    color: #0f172a;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.attendance-filter-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #f0f4f8 0%, #f8fafc 100%);
+    border: 2px solid #e2e8f0;
+}
+.attendance-filter-row {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 1rem;
     flex-wrap: wrap;
-    flex: 1 1 420px;
 }
 .attendance-filter-label {
-    font-size: 0.76rem;
-    color: #64748b;
+    font-size: 0.9rem;
+    color: #1e293b;
     white-space: nowrap;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 .attendance-filter-pills {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 0.15rem;
+    flex: 1 1 auto;
 }
 .attendance-filter-pills .btn {
-    padding: 0.22rem 0.55rem;
-    font-size: 0.74rem;
-    line-height: 1.15;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.92rem;
+    line-height: 1.2;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 2px solid;
+    transition: all 0.2s ease;
 }
 .attendance-bulk-form {
     margin: 0;
 }
+.attendance-filter-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+.attendance-compact-btn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    border-width: 2px;
+}
+.attendance-change-btn {
+    color: #fff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: 0;
+    font-weight: 700;
+    border-radius: 0.6rem;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+.attendance-change-btn:hover,
+.attendance-change-btn:focus {
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.24);
+    filter: brightness(1.03);
+}
+.attendance-change-btn:active {
+    transform: translateY(0);
+}
 .attendance-bulk-btn {
-    min-height: 30px;
-    padding: 0.28rem 0.65rem;
-    font-size: 0.74rem;
-    font-weight: 600;
+    min-height: 38px;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
     white-space: nowrap;
-    border-radius: 999px;
+    border-radius: 0.6rem;
+    box-shadow: 0 6px 14px rgba(245, 158, 11, 0.24);
+    border-width: 2px;
+    transition: all 0.2s ease;
 }
 .attendance-stat-card {
-    border-radius: 0.9rem;
+    border-radius: 1rem;
+    border: 2px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+.attendance-stat-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
 }
 .attendance-stat-card .app-card-body {
-    padding-top: 0.72rem !important;
-    padding-bottom: 0.72rem !important;
+    padding: 0.6rem 0.3rem !important;
+}
+.attendance-stat-card-compact {
+    border-radius: 0.85rem;
+}
+.attendance-stat-card-compact .app-card-body {
+    padding: 0.5rem 0.25rem !important;
+}
+.attendance-stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+}
+.attendance-stat-label {
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 .attendance-table-wrap {
     overflow-x: auto;
 }
+.attendance-table-wrap .dataTables_wrapper {
+    padding: 0.35rem 0.45rem 0.45rem;
+}
+.attendance-table-wrap .dataTables_filter {
+    margin-bottom: 0.35rem;
+}
+.attendance-table-wrap .dataTables_filter input {
+    margin-left: 0.4rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 0.22rem 0.45rem;
+}
+.attendance-table-wrap .dataTables_length,
+.attendance-table-wrap .dataTables_info,
+.attendance-table-wrap .dataTables_paginate {
+    font-size: 0.82rem;
+}
 .attendance-table {
-    min-width: 760px;
+    min-width: 800px;
 }
 .attendance-table thead th {
-    font-size: 0.76rem;
-    padding: 0.68rem 0.6rem;
+    font-size: 0.85rem;
+    padding: 0.85rem 0.75rem;
     white-space: nowrap;
+    font-weight: 700;
+    background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #cbd5e1;
 }
 .attendance-table td {
-    padding: 0.62rem 0.6rem;
+    padding: 0.85rem 0.75rem;
     vertical-align: middle;
+    font-weight: 500;
 }
 .attendance-table .badge {
-    font-size: 0.68rem;
-    font-weight: 600;
-    padding: 0.32rem 0.48rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 0.65rem;
+    border-radius: 0.5rem;
 }
 .attendance-status-cell .badge {
-    min-width: 72px;
+    min-width: 90px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .attendance-actions {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.35rem;
+    gap: 0.65rem;
     flex-wrap: wrap;
 }
 .attendance-actions .btn,
@@ -774,65 +988,171 @@ $day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     margin: 0 !important;
 }
 .attendance-actions .btn {
-    padding: 0.28rem 0.52rem;
-    font-size: 0.74rem;
-    line-height: 1.15;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border-width: 2px;
+    transition: all 0.2s ease;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 @media (max-width: 767.98px) {
     .attendance-toolbar {
         align-items: stretch !important;
     }
     .attendance-toolbar .app-page-title {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+    .attendance-top-strip {
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+    }
+    .attendance-current-term {
+        width: 100%;
     }
     .mapping-cta-btn {
         width: 100%;
         justify-content: center;
-        padding: 0.62rem 0.9rem;
+        padding: 0.8rem 0.9rem;
+        font-size: 1rem;
     }
     .attendance-filters {
-        align-items: stretch;
+        width: 100%;
     }
-    .attendance-filter-form,
+    .attendance-filter-panel {
+        padding: 0.85rem 0.75rem;
+        gap: 0.6rem;
+    }
+    .attendance-shell-card .app-card-body {
+        padding: 0.5rem 0.5rem !important;
+    }
+    .attendance-filter-row {
+        align-items: flex-start;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .attendance-filter-pills {
+        width: 100%;
+        gap: 0.4rem;
+    }
+    .attendance-filter-pills .btn {
+        flex: 1 1 calc(50% - 0.2rem);
+        font-size: 0.9rem;
+        padding: 0.5rem 0.6rem;
+        min-height: 40px;
+    }
+    .attendance-filter-actions,
+    .attendance-compact-btn {
+        width: 100%;
+    }
     .attendance-bulk-form {
         width: 100%;
     }
-    .attendance-filter-label {
-        width: auto;
-        margin: 0;
-    }
-    .attendance-filter-pills {
-        width: auto;
-        flex: 1 1 auto;
-    }
-    .attendance-filter-pills .btn,
     .attendance-bulk-btn {
-        flex: 0 0 auto;
+        width: 100%;
         justify-content: center;
-    }
-    .attendance-bulk-btn {
-        width: auto;
+        min-height: 44px;
+        font-size: 1rem;
     }
     .attendance-table {
-        min-width: 680px;
-        font-size: 0.76rem !important;
+        min-width: 100%;
+        font-size: 0.9rem !important;
     }
     .attendance-table thead th,
     .attendance-table td {
-        padding: 0.5rem 0.45rem;
+        padding: 0.75rem 0.6rem;
     }
     .attendance-table .badge {
-        font-size: 0.62rem;
-        padding: 0.22rem 0.38rem;
+        font-size: 0.78rem;
+        padding: 0.4rem 0.55rem;
     }
     .sticky-top {
         position: static;
     }
     .attendance-actions {
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .attendance-actions .btn {
+        flex: 1 1 calc(50% - 0.25rem);
+        min-height: 40px;
+        font-size: 0.85rem;
+    }
+    .attendance-stat-value {
+        font-size: 1.5rem;
     }
 }
+
+@media (max-width: 1024px) and (min-width: 768px) {
+    .attendance-filter-pills {
+        gap: 0.35rem;
+    }
+    .attendance-filter-pills .btn {
+        padding: 0.45rem 0.75rem;
+        font-size: 0.88rem;
+        flex: 0 0 auto;
+    }
+    .attendance-table {
+        min-width: 750px;
+    }
+    .attendance-table thead th,
+    .attendance-table td {
+        padding: 0.7rem 0.6rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Button & Icon Enhancements */
+.btn i {
+    font-size: 1rem;
+    margin-right: 0.3rem;
+}
+.attendance-bulk-btn i {
+    font-size: 1.1rem;
+}
+.attendance-actions .btn i {
+    font-size: 1rem;
+}
 </style>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tableElement = document.getElementById('attendanceDataTable');
+    if (!tableElement || typeof window.jQuery === 'undefined' || typeof jQuery.fn.DataTable === 'undefined') {
+        return;
+    }
+
+    const dataTable = jQuery(tableElement).DataTable({
+        pageLength: 25,
+        order: [[1, 'desc']],
+        columnDefs: [
+            { targets: 0, orderable: false, searchable: false },
+            { targets: 7, orderable: false, searchable: false }
+        ],
+        language: {
+            search: 'Search slots:',
+            lengthMenu: 'Show _MENU_ slots',
+            info: 'Showing _START_ to _END_ of _TOTAL_ slots',
+            emptyTable: 'No slots available for the selected term.'
+        }
+    });
+
+    dataTable.on('order.dt search.dt draw.dt', function () {
+        dataTable.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, index) {
+            cell.textContent = index + 1;
+        });
+    });
+
+    dataTable.draw();
+});
+</script>
 
 <?php include('footer.php'); ?>
 </body>

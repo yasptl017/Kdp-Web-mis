@@ -118,9 +118,9 @@ $result = $conn->query($query);
                                 <thead>
                                     <tr>
                                         <th class="text-center">ID</th>
-                                        <th class="text-center">Enrollment No</th>
+                                        <th class="text-center">Enrollment</th>
                                         <th class="text-center">Name</th>
-                                        <th class="text-center">Semester</th>
+                                        <th class="text-center">Sem</th>
                                         <th class="text-center">Class</th>
                                         <th class="text-center">Lab Batch</th>
                                         <th class="text-center">Tut Batch</th>
