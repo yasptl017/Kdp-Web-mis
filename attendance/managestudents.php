@@ -122,8 +122,8 @@ $result = $conn->query($query);
                                         <th class="text-center">Name</th>
                                         <th class="text-center">Sem</th>
                                         <th class="text-center">Class</th>
-                                        <th class="text-center">Lab Batch</th>
-                                        <th class="text-center">Tut Batch</th>
+                                        <th class="text-center">Lab</th>
+                                        <th class="text-center">Tut</th>
                                         <th class="text-center">Term</th>
                                         <th class="text-center">Actions</th>
                                     </tr>

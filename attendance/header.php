@@ -16,9 +16,12 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
             <div class="app-header-content">
                 <div class="row justify-content-between align-items-center">
 
-                    <div class="col-auto">
+                    <div class="col-auto d-flex align-items-center gap-2">
                         <a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img"><title>Menu</title><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg>
+                        </a>
+                        <a id="sidepanel-toggler-desktop" class="sidepanel-toggler-desktop d-none d-md-inline-flex" href="#" title="Toggle Sidebar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
                         </a>
                     </div>
 
