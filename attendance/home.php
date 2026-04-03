@@ -221,6 +221,35 @@ require_login();
                 font-size: 1.25rem;
             }
         }
+
+        /* Make card links fully clickable */
+        .quick-access-card {
+            position: relative;
+        }
+
+        .quick-access-card .app-card-link-mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            display: block;
+            text-decoration: none;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .quick-access-card-body {
+            position: relative;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .quick-access-card {
+            position: relative;
+            overflow: visible;
+        }
     </style>
 </head>
 <body class="app">
@@ -248,7 +277,7 @@ require_login();
                                 <i class="bi bi-calendar2-check"></i>
                             </div>
                             <h4 class="card-title">My Attendance</h4>
-                            <p class="card-description">View &amp; take attendance</p>
+                          
                         </div>
                         <a class="app-card-link-mask" href="myAttendanceSelect.php"></a>
                     </div>

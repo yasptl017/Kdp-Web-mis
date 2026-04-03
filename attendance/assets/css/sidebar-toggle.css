@@ -28,77 +28,151 @@
     transition: transform 0.3s ease;
 }
 
-/* Sidebar Styles */
-.app-sidepanel {
-    width: 250px;
-    transition: width 0.3s ease, transform 0.3s ease;
+/* Sidebar Styles - Desktop Only */
+@media (min-width: 1200px) {
+    .app-sidepanel {
+        width: 250px;
+        transition: width 0.3s ease;
+    }
+
+    .app-sidepanel .sidepanel-inner {
+        width: 250px;
+        transition: width 0.3s ease;
+    }
+
+    .app-sidepanel.collapsed {
+        width: 80px !important;
+        overflow: hidden;
+    }
+
+    .app-sidepanel.collapsed .sidepanel-inner {
+        width: 80px;
+    }
+
+    .app-sidepanel.collapsed .logo-text,
+    .app-sidepanel.collapsed .nav-link-text,
+    .app-sidepanel.collapsed .submenu-arrow,
+    .app-sidepanel.collapsed .submenu {
+        display: none !important;
+    }
+
+    .app-sidepanel.collapsed .app-branding {
+        justify-content: center;
+    }
+
+    .app-sidepanel.collapsed .nav-link {
+        justify-content: center;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .app-sidepanel.collapsed .nav-icon {
+        margin-right: 0;
+    }
+
+    .app-sidepanel.collapsed .nav-item.has-submenu .nav-link {
+        border-radius: 0.5rem;
+    }
 }
 
-.app-sidepanel .sidepanel-inner {
-    width: 250px;
-    transition: width 0.3s ease;
-}
-
-.app-sidepanel.collapsed {
-    width: 0 !important;
-    transform: translateX(0);
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.app-sidepanel.collapsed .sidepanel-inner {
-    width: 0;
-}
-
-.app-sidepanel.collapsed .logo-text,
-.app-sidepanel.collapsed .nav-link-text,
-.app-sidepanel.collapsed .submenu-arrow,
-.app-sidepanel.collapsed .submenu {
-    display: none !important;
-}
-
-.app-sidepanel.collapsed .nav-link {
-    justify-content: center;
-    padding: 0.75rem 0.5rem;
-}
-
-.app-sidepanel.collapsed .nav-icon {
-    margin-right: 0;
-}
-
-.app-sidepanel.collapsed .nav-item.has-submenu .nav-link {
-    border-radius: 0.5rem;
-}
-
-/* App Wrapper - Adjust margin based on sidebar state */
-.app-wrapper {
-    transition: margin-left 0.3s ease;
-}
-
+/* App Wrapper - Desktop Margin Management */
 @media (min-width: 1200px) {
     .app-wrapper {
         margin-left: 250px;
+        transition: margin-left 0.3s ease;
     }
+
+    .app-wrapper.sidebar-collapsed {
+        margin-left: 80px !important;
+    }
+}
+
+/* Mobile and Tablet - Reset sidebar and wrapper */
+@media (max-width: 1199.98px) {
+    .app-sidepanel {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: auto !important;
+        height: 100%;
+        z-index: 1030;
+    }
+
+    .app-sidepanel .sidepanel-inner {
+        width: 250px !important;
+    }
+
+    .app-sidepanel.collapsed {
+        width: auto !important;
+    }
+
+    .app-sidepanel.collapsed .sidepanel-inner {
+        width: 250px !important;
+    }
+
+    .app-sidepanel.collapsed .logo-text,
+    .app-sidepanel.collapsed .nav-link-text {
+        display: inline !important;
+    }
+
+    .app-wrapper {
+        margin-left: 0 !important;
+    }
+
     .app-wrapper.sidebar-collapsed {
         margin-left: 0 !important;
     }
-    body.sidebar-collapsed .app-header-inner {
-        margin-left: 0 !important;
-        transition: margin-left 0.3s ease;
-    }
-    body.sidebar-collapsed .app-wrapper {
-        margin-left: 0 !important;
-    }
-    body.sidebar-collapsed .app-sidepanel {
-        transform: translateX(-260px);
-    }
 }
 
+/* Header Content Layout */
 .app-header-content {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    width: 100%;
 }
 
+.app-header-content .row {
+    width: 100%;
+    gap: 0.25rem;
+}
+
+/* Mobile and Tablet Header Fix - Prevent content push to right */
+@media (max-width: 1199.98px) {
+    .app-header-content .row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    /* Hamburger menu - always visible on mobile/tablet */
+    .app-header-content .col-auto:first-child {
+        flex-shrink: 0;
+        order: 1;
+    }
+
+    /* Search mobile trigger */
+    .app-header-content .search-mobile-trigger {
+        flex-shrink: 0;
+        order: 2;
+    }
+
+    /* Search box - takes available space but has limits */
+    .app-header-content .app-search-box {
+        flex: 1;
+        min-width: 0;
+        order: 3;
+        max-width: 100%;
+    }
+
+    /* User utilities - stay on the right */
+    .app-header-content .app-utilities {
+        flex-shrink: 0;
+        order: 4;
+        margin-left: auto;
+    }
+}
+
+/* Close button styles */
 .sidepanel-close {
     position: absolute;
     top: 0.5rem;
@@ -123,34 +197,10 @@
     color: #000;
 }
 
-.sidepanel-close { display: none; }
-.app-sidepanel.collapsed .sidepanel-close { display: flex; }
-
-/* Mobile styles */
-@media (max-width: 1200px) {
-    .app-sidepanel { width: auto; transform: none; }
-    .app-sidepanel .sidepanel-inner { width: 250px; }
-    .app-sidepanel.collapsed { width: auto; transform: none; }
-    .app-sidepanel.collapsed .sidepanel-inner { width: 250px; }
-    .sidepanel-close { display: flex; }
-}
-
+/* Transitions for smooth animations */
 .nav-link-text,
 .logo-text,
 .nav-icon,
 .app-branding {
     transition: opacity 0.2s, visibility 0.2s;
-}
-
-.app-sidepanel.collapsed .nav-item:hover::after {
-    content: '';
-    position: absolute;
-    left: 70px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
 }

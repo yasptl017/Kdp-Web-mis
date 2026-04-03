@@ -5,34 +5,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidepanelClose = document.getElementById("sidepanel-close");
   const appSidepanel = document.getElementById("app-sidepanel");
   const appWrapper = document.querySelector(".app-wrapper");
-  const headerInner = document.querySelector(".app-header-inner");
-  const bodyEl = document.body;
 
   if (!appSidepanel) return;
 
   const SIDEBAR_STATE_KEY = "sidebar_collapsed";
-  const EXPANDED_MARGIN = "250px";
-  const COLLAPSED_MARGIN = "0px";
-
-  function applyLayout(isCollapsed) {
-    if (appWrapper) {
-      appWrapper.style.marginLeft = isCollapsed ? COLLAPSED_MARGIN : EXPANDED_MARGIN;
-      appWrapper.style.maxWidth = "100%";
-    }
-    if (headerInner) {
-      headerInner.style.marginLeft = isCollapsed ? COLLAPSED_MARGIN : EXPANDED_MARGIN;
-    }
-    if (bodyEl) {
-      bodyEl.classList.toggle("sidebar-collapsed", isCollapsed);
-      bodyEl.classList.toggle("sidebar-expanded", !isCollapsed);
-    }
-  }
 
   function collapseSidebar() {
     appSidepanel.classList.add("collapsed");
     appSidepanel.classList.remove("sidepanel-visible");
     appSidepanel.classList.add("sidepanel-hidden");
-    applyLayout(true);
+    if (appWrapper) {
+      appWrapper.classList.add("sidebar-collapsed");
+    }
     localStorage.setItem(SIDEBAR_STATE_KEY, "true");
   }
 
@@ -40,7 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
     appSidepanel.classList.remove("collapsed");
     appSidepanel.classList.remove("sidepanel-hidden");
     appSidepanel.classList.add("sidepanel-visible");
-    applyLayout(false);
+    if (appWrapper) {
+      appWrapper.classList.remove("sidebar-collapsed");
+    }
     localStorage.setItem(SIDEBAR_STATE_KEY, "false");
   }
 
@@ -53,14 +39,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initSidebar() {
-    const isCollapsed = localStorage.getItem(SIDEBAR_STATE_KEY) === "true";
-    if (window.innerWidth >= 1200 && isCollapsed) {
-      collapseSidebar();
+    // Only collapse on desktop (1200px+)
+    if (window.innerWidth >= 1200) {
+      const isCollapsed = localStorage.getItem(SIDEBAR_STATE_KEY) === "true";
+      if (isCollapsed) {
+        collapseSidebar();
+      } else {
+        expandSidebar();
+      }
     } else {
+      // Mobile/tablet always expanded
       expandSidebar();
     }
   }
 
+  function resetMobileStyles() {
+    appSidepanel.classList.remove("collapsed");
+    appSidepanel.classList.remove("sidepanel-hidden");
+    if (appWrapper) {
+      appWrapper.classList.remove("sidebar-collapsed");
+    }
+  }
+
+  // Desktop toggle button
   if (sidepanelTogglerDesktop) {
     sidepanelTogglerDesktop.addEventListener("click", (e) => {
       e.preventDefault();
@@ -68,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Mobile toggle button (hamburger menu)
   if (sidepanelTogglerMobile) {
     sidepanelTogglerMobile.addEventListener("click", (e) => {
       e.preventDefault();
@@ -75,35 +77,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Close button (X icon)
   if (sidepanelClose) {
     sidepanelClose.addEventListener("click", (e) => {
       e.preventDefault();
       if (window.innerWidth < 1200) {
+        // Mobile: just hide the sidebar
         appSidepanel.classList.remove("show");
       } else {
+        // Desktop: toggle collapse
         toggleSidebar();
       }
     });
   }
 
+  // Handle window resize
   window.addEventListener("resize", () => {
     if (window.innerWidth < 1200) {
-      appSidepanel.classList.remove("collapsed");
-      appSidepanel.classList.remove("sidepanel-hidden");
-      if (appWrapper) {
-        appWrapper.style.marginLeft = "";
-        appWrapper.style.maxWidth = "";
-      }
-      if (headerInner) headerInner.style.marginLeft = "";
-      if (bodyEl) {
-        bodyEl.classList.remove("sidebar-collapsed");
-        bodyEl.classList.remove("sidebar-expanded");
-      }
+      // Switch to mobile layout
+      resetMobileStyles();
+      appSidepanel.classList.remove("show");
     } else {
+      // Switch to desktop layout - restore saved state
       const isCollapsed = localStorage.getItem(SIDEBAR_STATE_KEY) === "true";
-      if (isCollapsed) collapseSidebar(); else expandSidebar();
+      if (isCollapsed) {
+        collapseSidebar();
+      } else {
+        expandSidebar();
+      }
     }
   });
 
+  // Initialize on page load
   initSidebar();
 });
