@@ -7,7 +7,28 @@ $mapping_pages = [
     'addLabMapping.php',
     'addTutMapping.php',
 ];
+$alternate_pages = [
+    'lecAttendance.php',
+    'labAttendance.php',
+    'tutAttendance.php',
+];
+$manage_pages = [
+    'managefaculty.php',
+    'managesubjects.php',
+    'managestudents.php',
+    'managesemester.php',
+    'manageslot.php',
+    'managelabs.php',
+    'bulkupload.php',
+    'editfaculty.php',
+    'editsubjects.php',
+    'editstudent.php',
+    'editsemester.php',
+    'editslot.php',
+];
 $is_mapping_page = in_array($current_page, $mapping_pages, true);
+$is_alternate_page = in_array($current_page, $alternate_pages, true);
+$is_manage_page = in_array($current_page, $manage_pages, true);
 $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?? '')));
 ?>
 <header class="app-header fixed-top">
@@ -20,7 +41,7 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                         <a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img"><title>Menu</title><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg>
                         </a>
-                        <a id="sidepanel-toggler-desktop" class="sidepanel-toggler-desktop d-none d-md-inline-flex" href="#" title="Toggle Sidebar">
+                        <a id="sidepanel-toggler-desktop" class="sidepanel-toggler-desktop d-none d-xl-inline-flex" href="#" title="Toggle Sidebar">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
                         </a>
                     </div>
@@ -130,7 +151,7 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                         </a>
                     </li>
                     <li class="nav-item has-submenu">
-                        <a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="false" aria-controls="submenu-2">
+                        <a class="nav-link submenu-toggle <?= $is_alternate_page ? 'active' : '' ?>" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="<?= $is_alternate_page ? 'true' : 'false' ?>" aria-controls="submenu-2">
                             <span class="nav-icon"><i class="bi bi-diagram-3"></i></span>
                             <span class="nav-link-text">Alternate</span>
                             <span class="submenu-arrow">
@@ -139,16 +160,16 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                                 </svg>
                             </span>
                         </a>
-                        <div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">
+                        <div id="submenu-2" class="collapse submenu submenu-2 <?= $is_alternate_page ? 'show' : '' ?>" data-bs-parent="#menu-accordion">
                             <ul class="submenu-list list-unstyled">
-                                <li class="submenu-item"><a class="submenu-link" href="lecAttendance.php"><i class="bi bi-journal-text me-1"></i>Lecture Attendance</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="labAttendance.php"><i class="bi bi-camera-video me-1"></i>Lab Attendance</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="tutAttendance.php"><i class="bi bi-book me-1"></i>Tutorial Attendance</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'lecAttendance.php' ? 'active' : '' ?>" href="lecAttendance.php"><i class="bi bi-journal-text me-1"></i>Lecture Attendance</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'labAttendance.php' ? 'active' : '' ?>" href="labAttendance.php"><i class="bi bi-camera-video me-1"></i>Lab Attendance</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'tutAttendance.php' ? 'active' : '' ?>" href="tutAttendance.php"><i class="bi bi-book me-1"></i>Tutorial Attendance</a></li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item has-submenu">
-                        <a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-1" aria-expanded="false" aria-controls="submenu-1">
+                        <a class="nav-link submenu-toggle <?= $is_manage_page ? 'active' : '' ?>" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-1" aria-expanded="<?= $is_manage_page ? 'true' : 'false' ?>" aria-controls="submenu-1">
                             <span class="nav-icon"><i class="bi bi-gear"></i></span>
                             <span class="nav-link-text">Manage</span>
                             <span class="submenu-arrow">
@@ -157,15 +178,15 @@ $header_enrollment_search = htmlspecialchars(trim((string)($_GET['enrollment'] ?
                                 </svg>
                             </span>
                         </a>
-                        <div id="submenu-1" class="collapse submenu submenu-1" data-bs-parent="#menu-accordion">
+                        <div id="submenu-1" class="collapse submenu submenu-1 <?= $is_manage_page ? 'show' : '' ?>" data-bs-parent="#menu-accordion">
                             <ul class="submenu-list list-unstyled">
-                                <li class="submenu-item"><a class="submenu-link" href="managefaculty.php"><i class="bi bi-person-badge me-1"></i>Faculty</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="managesubjects.php"><i class="bi bi-journal-bookmark me-1"></i>Subjects</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="managestudents.php"><i class="bi bi-people me-1"></i>Students</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="managesemester.php"><i class="bi bi-calendar3 me-1"></i>Semester</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="manageslot.php"><i class="bi bi-clock me-1"></i>Slots</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="managelabs.php"><i class="bi bi-building me-1"></i>Labs</a></li>
-                                <li class="submenu-item"><a class="submenu-link" href="bulkupload.php"><i class="bi bi-upload me-1"></i>Bulk Upload</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= in_array($current_page, ['managefaculty.php', 'editfaculty.php'], true) ? 'active' : '' ?>" href="managefaculty.php"><i class="bi bi-person-badge me-1"></i>Faculty</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= in_array($current_page, ['managesubjects.php', 'editsubjects.php'], true) ? 'active' : '' ?>" href="managesubjects.php"><i class="bi bi-journal-bookmark me-1"></i>Subjects</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= in_array($current_page, ['managestudents.php', 'editstudent.php'], true) ? 'active' : '' ?>" href="managestudents.php"><i class="bi bi-people me-1"></i>Students</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= in_array($current_page, ['managesemester.php', 'editsemester.php'], true) ? 'active' : '' ?>" href="managesemester.php"><i class="bi bi-calendar3 me-1"></i>Semester</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= in_array($current_page, ['manageslot.php', 'editslot.php'], true) ? 'active' : '' ?>" href="manageslot.php"><i class="bi bi-clock me-1"></i>Slots</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'managelabs.php' ? 'active' : '' ?>" href="managelabs.php"><i class="bi bi-building me-1"></i>Labs</a></li>
+                                <li class="submenu-item"><a class="submenu-link <?= $current_page === 'bulkupload.php' ? 'active' : '' ?>" href="bulkupload.php"><i class="bi bi-upload me-1"></i>Bulk Upload</a></li>
                             </ul>
                         </div>
                     </li>
